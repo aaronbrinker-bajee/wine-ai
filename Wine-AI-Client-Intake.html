@@ -446,16 +446,16 @@
       <div class="two-col">
         <div class="field">
           <label>Winery / Brand Name *</label>
-          <input type="text" name="wineryName" placeholder="e.g. Scotto Family Cellars" required/>
+          <input type="text" name="wineryName" placeholder="e.g. Ridge Vineyards" required/>
         </div>
         <div class="field">
           <label>Owner / Primary Contact *</label>
-          <input type="text" name="ownerName" placeholder="e.g. Anthony Scotto" required/>
+          <input type="text" name="ownerName" placeholder="e.g. Jane Smith" required/>
         </div>
       </div>
       <div class="field">
         <label>Tasting Room Location(s)</label>
-        <input type="text" name="tastingRoomLocation" placeholder="e.g. Lodi, CA · Clements Hills AVA"/>
+        <input type="text" name="tastingRoomLocation" placeholder="e.g. Napa, CA · Rutherford AVA"/>
       </div>
       <div class="two-col">
         <div class="field">
@@ -486,7 +486,7 @@
         <div class="field">
           <label>Total annual revenue</label>
           <div class="hint">e.g. $4.5M</div>
-          <input type="text" name="totalRevenue" placeholder="$4,500,000"/>
+          <input type="text" name="totalRevenue" placeholder="$4,500,000" inputmode="numeric"/>
         </div>
         <div class="field">
           <label>DTC revenue (% or $)</label>
@@ -497,7 +497,7 @@
       <div class="two-col">
         <div class="field">
           <label>Wholesale / distributor revenue</label>
-          <input type="text" name="wholesaleRevenue" placeholder="e.g. $1,800,000"/>
+          <input type="text" name="wholesaleRevenue" placeholder="$1,800,000" inputmode="numeric"/>
         </div>
         <div class="field">
           <label>Cases produced / year</label>
@@ -509,7 +509,7 @@
         <div class="field">
           <label>Average bottle price (blended)</label>
           <div class="hint">across all SKUs</div>
-          <input type="text" name="avgBottlePrice" placeholder="e.g. $28"/>
+          <input type="text" name="avgBottlePrice" placeholder="$28" inputmode="numeric"/>
         </div>
         <div class="field">
           <label>Number of active SKUs</label>
@@ -557,7 +557,7 @@
       <div class="two-col">
         <div class="field">
           <label>Avg club member annual value</label>
-          <input type="text" name="clubValue" placeholder="e.g. $480/yr"/>
+          <input type="text" name="clubValue" placeholder="$480" inputmode="numeric"/>
         </div>
         <div class="field">
           <label>Hours/week on content creation</label>
@@ -573,29 +573,29 @@
       <div class="two-col">
         <div class="field">
           <label>Total loan / credit facility balance</label>
-          <input type="text" name="loanBalance" placeholder="e.g. $2,200,000"/>
+          <input type="text" name="loanBalance" placeholder="$2,200,000" inputmode="numeric"/>
         </div>
         <div class="field">
           <label>Harvest line of credit</label>
-          <input type="text" name="harvestLine" placeholder="e.g. $500,000"/>
+          <input type="text" name="harvestLine" placeholder="$500,000" inputmode="numeric"/>
         </div>
       </div>
       <div class="two-col">
         <div class="field">
           <label>Total inventory value (at cost)</label>
           <div class="hint">barrel + bottle</div>
-          <input type="text" name="inventoryValue" placeholder="e.g. $1,400,000"/>
+          <input type="text" name="inventoryValue" placeholder="$1,400,000" inputmode="numeric"/>
         </div>
         <div class="field">
           <label>Annual grape / bulk wine spend</label>
-          <input type="text" name="grapeSpend" placeholder="e.g. $600,000"/>
+          <input type="text" name="grapeSpend" placeholder="$600,000" inputmode="numeric"/>
         </div>
       </div>
       <div class="two-col">
         <div class="field">
           <label>Blended team hourly rate</label>
           <div class="hint">avg fully-loaded cost/hr</div>
-          <input type="text" name="blendedRate" placeholder="e.g. $45/hr"/>
+          <input type="text" name="blendedRate" placeholder="$45" inputmode="numeric"/>
         </div>
         <div class="field">
           <label>Number of full-time employees</label>
@@ -944,19 +944,32 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ── Checkbox styling ───────────────────────────────────────────────────────
-document.querySelectorAll('.checkbox-option input').forEach(input => {
-  input.addEventListener('change', () => {
-    input.closest('.checkbox-option').classList.toggle('checked', input.checked);
-    updateProgress();
+function initCheckboxes() {
+  document.querySelectorAll('.checkbox-option').forEach(function(label) {
+    label.addEventListener('click', function(e) {
+      var input = label.querySelector('input[type="checkbox"]');
+      if (!input) return;
+      // Toggle checked state
+      input.checked = !input.checked;
+      label.classList.toggle('checked', input.checked);
+      updateProgress();
+      e.preventDefault();
+    });
   });
-});
 
-document.querySelectorAll('.module-item input').forEach(input => {
-  input.addEventListener('change', () => {
-    input.closest('.module-item').classList.toggle('checked', input.checked);
-    updateProgress();
+  document.querySelectorAll('.module-item').forEach(function(label) {
+    label.addEventListener('click', function(e) {
+      var input = label.querySelector('input[type="checkbox"]');
+      if (!input) return;
+      input.checked = !input.checked;
+      label.classList.toggle('checked', input.checked);
+      label.querySelector('.module-check').textContent = input.checked ? '✓' : '';
+      updateProgress();
+      e.preventDefault();
+    });
   });
-});
+}
+initCheckboxes();
 
 // ── Progress ───────────────────────────────────────────────────────────────
 const allInputs = document.querySelectorAll('input[type=text], input[type=number], textarea');
@@ -1048,16 +1061,26 @@ function saveToLocalStorage(data) {
 let lastData = null;
 
 function downloadJSON(data) {
-  const json = JSON.stringify(data, null, 2);
-  const blob = new Blob([json], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = version !== '1' ? `${clientId}-intake-v${version}.json` : `${clientId}-intake.json`;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
+  try {
+    var json = JSON.stringify(data, null, 2);
+    var filename = (version !== '1')
+      ? clientId + '-intake-v' + version + '.json'
+      : clientId + '-intake.json';
+    // Use data URI — works reliably on GitHub Pages
+    var dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(json);
+    var a = document.createElement('a');
+    a.setAttribute('href', dataUri);
+    a.setAttribute('download', filename);
+    a.style.display = 'none';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  } catch(err) {
+    console.log('Download error:', err);
+    // Fallback: show data in new tab
+    var w = window.open();
+    if (w) w.document.write('<pre>' + JSON.stringify(data, null, 2) + '</pre>');
+  }
 }
 
 // ── Submit ─────────────────────────────────────────────────────────────────
@@ -1070,14 +1093,36 @@ document.getElementById('intake-form').addEventListener('submit', function(e) {
   // Save to localStorage
   saveToLocalStorage(data);
 
-  // Download JSON
+  // POST to Google Sheets webhook
+  var webhookUrl = 'https://script.google.com/macros/s/AKfycbzW6uPh5LD50Ico075RTqF7KvZpTiGLhYvAwAO_n7rm2lcYqJTJmAs5qrIy4npVQcsN/exec';
+  if (webhookUrl !== 'YOUR_APPS_SCRIPT_URL_HERE') {
+    fetch(webhookUrl, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    }).catch(function(err) {
+      console.log('Webhook error (non-blocking):', err);
+    });
+  }
+
+  // Download JSON as backup
   downloadJSON(data);
 
   // Show success screen
-  document.getElementById('intake-form').style.display = 'none';
-  const success = document.getElementById('success-screen');
-  success.style.display = 'block';
-  success.scrollIntoView({ behavior: 'smooth' });
+  var formEl = document.getElementById('intake-form');
+  var successEl = document.getElementById('success-screen');
+  if (formEl) formEl.style.display = 'none';
+  if (successEl) {
+    successEl.style.display = 'block';
+    successEl.style.maxWidth = '680px';
+    successEl.style.margin = '60px auto';
+    successEl.style.padding = '0 20px';
+    successEl.style.textAlign = 'center';
+    setTimeout(function() {
+      successEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
+  }
 
   document.getElementById('success-name').textContent = data.ownerName || clientLabel;
   document.getElementById('success-filename').textContent = version !== '1' ? `${clientId}-intake-v${version}.json` : `${clientId}-intake.json`;
