@@ -1084,8 +1084,13 @@ function downloadJSON(data) {
 }
 
 // ── Submit ─────────────────────────────────────────────────────────────────
-document.getElementById('intake-form').addEventListener('submit', function(e) {
+document.addEventListener('DOMContentLoaded', function() {
+  var intakeForm = document.getElementById('intake-form');
+  if (!intakeForm) { console.error('intake-form not found'); return; }
+
+  intakeForm.addEventListener('submit', function(e) {
   e.preventDefault();
+  e.stopPropagation();
 
   const data = collectFormData();
   lastData = data;
@@ -1138,9 +1143,10 @@ document.getElementById('intake-form').addEventListener('submit', function(e) {
 });
 
 // Re-download button
-document.getElementById('redownload-btn').addEventListener('click', () => {
-  if (lastData) downloadJSON(lastData);
-});
+  document.getElementById('redownload-btn').addEventListener('click', () => {
+    if (lastData) downloadJSON(lastData);
+  });
+}); // end DOMContentLoaded
 </script>
 
 </body>
