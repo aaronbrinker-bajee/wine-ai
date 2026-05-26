@@ -910,8 +910,6 @@ function updateSubtitle(wineryName) {
     const vLabel = version !== '1' ? ' · Version ' + version : '';
   document.getElementById('form-subtitle').textContent = 'Prepared for ' + name + vLabel + ' · ' + today;
 }
-updateSubtitle(null);
-
 if (clientId !== 'unknown') {
   const banner = document.getElementById('client-banner');
   banner.style.display = 'block';
@@ -923,6 +921,9 @@ if (clientId !== 'unknown') {
 
 // Update subtitle live as winery name is typed
 document.addEventListener('DOMContentLoaded', () => {
+  // Set subtitle now that DOM is ready
+  updateSubtitle(null);
+
   const nameField = document.querySelector('input[name="wineryName"]');
   if (nameField) {
     nameField.addEventListener('input', () => {
