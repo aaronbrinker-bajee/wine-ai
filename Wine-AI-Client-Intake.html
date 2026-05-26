@@ -385,6 +385,17 @@
   <div class="header-sub" id="form-subtitle">Prepared for —</div>
 </div>
 <div class="gold-bar"></div>
+<script>
+(function() {
+  var params = new URLSearchParams(window.location.search);
+  var clientId = params.get('client') || '';
+  var version = params.get('v') || '1';
+  var clientLabel = clientId ? clientId.charAt(0).toUpperCase() + clientId.slice(1) + ' Winery' : '—';
+  var today = new Date().toLocaleDateString('en-US', {year:'numeric', month:'long', day:'numeric'});
+  var vLabel = version !== '1' ? ' · Version ' + version : '';
+  document.getElementById('form-subtitle').textContent = 'Prepared for ' + clientLabel + vLabel + ' · ' + today;
+})();
+</script>
 
 <!-- Main form -->
 <div id="form-body">
