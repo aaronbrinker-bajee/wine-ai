@@ -382,7 +382,7 @@
 <div class="header">
   <div class="header-eyebrow">Wine AI Consulting · Confidential</div>
   <h1>Winery AI Readiness<br/><em>Questionnaire</em></h1>
-  <div class="header-sub">Prepared for Scotto Family Winery · 2025</div>
+  <div class="header-sub" id="form-subtitle">Prepared for &mdash; · Version 1 · 2025</div>
 </div>
 <div class="gold-bar"></div>
 
@@ -901,16 +901,36 @@
 const urlParams = new URLSearchParams(window.location.search);
 const clientId = urlParams.get('client') || 'unknown';
 const clientLabel = clientId.charAt(0).toUpperCase() + clientId.slice(1);
+const version = urlParams.get('v') || '1';
+const today = new Date().toLocaleDateString('en-US', {year:'numeric', month:'long', day:'numeric'});
+
+// Update subtitle dynamically
+function updateSubtitle(wineryName) {
+  const name = wineryName || (clientId !== 'unknown' ? clientLabel + ' Winery' : '—');
+  const vLabel = version !== '1' ? \` · Version \${version}\` : '';
+  document.getElementById('form-subtitle').textContent =
+    \`Prepared for \${name}\${vLabel} · \${today}\`;
+}
+updateSubtitle(null);
 
 if (clientId !== 'unknown') {
   const banner = document.getElementById('client-banner');
   banner.style.display = 'block';
   document.getElementById('client-tag-text').textContent =
-    `Linked to client profile: ${clientLabel}`;
-  // Update page subtitle
-  document.querySelector('.header-sub').textContent =
-    `Prepared for ${clientLabel} Winery · 2025`;
+    version !== '1'
+      ? \`Linked to client profile: \${clientLabel} · Version \${version}\`
+      : \`Linked to client profile: \${clientLabel}\`;
 }
+
+// Update subtitle live as winery name is typed
+document.addEventListener('DOMContentLoaded', () => {
+  const nameField = document.querySelector('input[name="wineryName"]');
+  if (nameField) {
+    nameField.addEventListener('input', () => {
+      updateSubtitle(nameField.value.trim() || null);
+    });
+  }
+});
 
 // ── Checkbox styling ───────────────────────────────────────────────────────
 document.querySelectorAll('.checkbox-option input').forEach(input => {
@@ -952,7 +972,7 @@ function collectFormData() {
     _meta: {
       clientId: clientId,
       submittedAt: new Date().toISOString(),
-      formVersion: '1.0'
+      formVersion: '1.0', intakeVersion: version
     }
   };
 
@@ -1022,7 +1042,7 @@ function downloadJSON(data) {
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = `${clientId}-intake.json`;
+  a.download = version !== '1' ? `${clientId}-intake-v${version}.json` : `${clientId}-intake.json`;
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
@@ -1049,7 +1069,7 @@ document.getElementById('intake-form').addEventListener('submit', function(e) {
   success.scrollIntoView({ behavior: 'smooth' });
 
   document.getElementById('success-name').textContent = data.ownerName || clientLabel;
-  document.getElementById('success-filename').textContent = `${clientId}-intake.json`;
+  document.getElementById('success-filename').textContent = version !== '1' ? `${clientId}-intake-v${version}.json` : `${clientId}-intake.json`;
   document.getElementById('progress-fill').style.width = '100%';
   document.getElementById('progress-pct').textContent = '100% complete';
 });
