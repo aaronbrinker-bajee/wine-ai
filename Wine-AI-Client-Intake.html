@@ -1,0 +1,1064 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Winery AI Readiness — Intake Form</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Source+Sans+3:wght@300;400;600&display=swap');
+
+    :root {
+      --wine:    #7B2438;
+      --wine-dk: #5C1A29;
+      --wine-lt: #F2DDE1;
+      --gold:    #B8821A;
+      --gold-lt: #F5E6C8;
+      --cream:   #FBF6F3;
+      --parch:   #F5EDE8;
+      --text:    #2C1810;
+      --mid:     #6B3D35;
+      --muted:   #9C7168;
+      --border:  #E2C9C0;
+      --green:   #2D6A4F;
+      --blue:    #1D4E89;
+      --purple:  #5B2D8A;
+      --field:   #FDFAF8;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Source Sans 3', sans-serif;
+      background: var(--cream);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ── Header ── */
+    .header {
+      background: var(--wine-dk);
+      padding: 36px 24px 28px;
+      text-align: center;
+    }
+    .header-eyebrow {
+      font-family: 'Source Sans 3', sans-serif;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--wine-lt);
+      margin-bottom: 10px;
+    }
+    .header h1 {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: clamp(26px, 5vw, 40px);
+      color: #fff;
+      line-height: 1.15;
+      margin-bottom: 10px;
+    }
+    .header h1 em { color: var(--gold-lt); font-style: italic; }
+    .header-sub {
+      font-size: 13px;
+      color: var(--wine-lt);
+      opacity: 0.85;
+      letter-spacing: 0.03em;
+    }
+
+    /* ── Gold divider ── */
+    .gold-bar { height: 3px; background: var(--gold); }
+
+    /* ── Intro ── */
+    .intro {
+      max-width: 680px;
+      margin: 28px auto;
+      padding: 0 20px;
+    }
+    .intro p {
+      font-size: 15px;
+      color: var(--mid);
+      line-height: 1.8;
+      margin-bottom: 14px;
+    }
+    .tip-box {
+      display: flex;
+      gap: 12px;
+      background: var(--gold-lt);
+      border: 1px solid var(--gold);
+      border-radius: 8px;
+      padding: 14px 16px;
+      align-items: flex-start;
+    }
+    .tip-label {
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+      white-space: nowrap;
+      padding-top: 2px;
+    }
+    .tip-text { font-size: 13px; color: var(--mid); line-height: 1.6; }
+
+    /* ── Client ID banner ── */
+    .client-banner {
+      max-width: 680px;
+      margin: 0 auto 20px;
+      padding: 0 20px;
+    }
+    .client-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(45,106,79,0.1);
+      border: 1px solid rgba(45,106,79,0.3);
+      border-radius: 20px;
+      padding: 6px 14px;
+      font-size: 12px;
+      color: var(--green);
+      font-weight: 600;
+    }
+    .client-tag .dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--green);
+    }
+
+    /* ── Part banner ── */
+    .part-banner {
+      max-width: 680px;
+      margin: 0 auto 24px;
+      padding: 0 20px;
+    }
+    .part-inner {
+      border-radius: 10px;
+      padding: 20px 24px;
+      color: #fff;
+    }
+    .part-eyebrow {
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      opacity: 0.7;
+      margin-bottom: 4px;
+    }
+    .part-title {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 22px;
+      margin-bottom: 4px;
+    }
+    .part-sub { font-size: 12px; opacity: 0.75; }
+
+    /* ── Section ── */
+    .section {
+      max-width: 680px;
+      margin: 0 auto 20px;
+      padding: 0 20px;
+    }
+    .section-header {
+      border-radius: 6px;
+      padding: 9px 14px;
+      margin-bottom: 14px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #fff;
+    }
+
+    /* ── Form fields ── */
+    .field { margin-bottom: 14px; }
+    .field label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 5px;
+    }
+    .field .hint {
+      font-size: 11px;
+      color: var(--muted);
+      font-style: italic;
+      margin-bottom: 5px;
+    }
+    .field input, .field select, .field textarea {
+      width: 100%;
+      background: var(--field);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 10px 12px;
+      font-size: 14px;
+      font-family: 'Source Sans 3', sans-serif;
+      color: var(--text);
+      transition: border-color 0.2s;
+      outline: none;
+    }
+    .field input:focus, .field select:focus, .field textarea:focus {
+      border-color: var(--wine);
+      box-shadow: 0 0 0 3px rgba(123,36,56,0.08);
+    }
+    .field textarea { resize: vertical; min-height: 80px; }
+
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    @media (max-width: 520px) { .two-col { grid-template-columns: 1fr; } }
+
+    /* ── Checkboxes ── */
+    .checkbox-group { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+    .checkbox-option {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 7px 12px;
+      background: var(--field);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 12px;
+      color: var(--mid);
+      transition: all 0.15s;
+      user-select: none;
+    }
+    .checkbox-option:hover { border-color: var(--wine); color: var(--wine); }
+    .checkbox-option input { display: none; }
+    .checkbox-option.checked {
+      background: var(--wine-lt);
+      border-color: var(--wine);
+      color: var(--wine);
+      font-weight: 600;
+    }
+
+    /* ── Module checklist ── */
+    .module-list { display: grid; gap: 8px; }
+    .module-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 12px 14px;
+      background: var(--field);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .module-item:hover { border-color: var(--wine); }
+    .module-item.checked { background: var(--wine-lt); border-color: var(--wine); }
+    .module-item input { display: none; }
+    .module-check {
+      width: 20px; height: 20px;
+      border: 2px solid var(--border);
+      border-radius: 4px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      font-size: 12px;
+      transition: all 0.15s;
+    }
+    .module-item.checked .module-check {
+      background: var(--wine);
+      border-color: var(--wine);
+      color: #fff;
+    }
+    .module-name { font-size: 13px; font-weight: 600; color: var(--text); }
+    .module-benefit { font-size: 11px; color: var(--muted); font-style: italic; }
+
+    /* ── Progress bar ── */
+    .progress-wrap {
+      max-width: 680px;
+      margin: 0 auto 24px;
+      padding: 0 20px;
+    }
+    .progress-bar {
+      height: 4px;
+      background: var(--border);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--wine), var(--gold));
+      border-radius: 2px;
+      transition: width 0.4s ease;
+    }
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    /* ── Submit ── */
+    .submit-wrap {
+      max-width: 680px;
+      margin: 0 auto 60px;
+      padding: 0 20px;
+    }
+    .submit-btn {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, var(--wine-dk), var(--wine));
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 17px;
+      cursor: pointer;
+      letter-spacing: 0.02em;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .submit-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(123,36,56,0.3);
+    }
+    .submit-note {
+      text-align: center;
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 10px;
+      line-height: 1.6;
+    }
+
+    /* ── Success screen ── */
+    .success-screen {
+      display: none;
+      max-width: 680px;
+      margin: 60px auto;
+      padding: 0 20px;
+      text-align: center;
+    }
+    .success-icon { font-size: 56px; margin-bottom: 16px; }
+    .success-title {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 30px;
+      color: var(--wine);
+      margin-bottom: 10px;
+    }
+    .success-sub { font-size: 15px; color: var(--mid); line-height: 1.7; margin-bottom: 24px; }
+    .success-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    .btn-download {
+      padding: 12px 24px;
+      background: var(--wine);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-family: 'Source Sans 3', sans-serif;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .btn-download:hover { background: var(--wine-dk); }
+    .btn-secondary {
+      padding: 12px 24px;
+      background: transparent;
+      color: var(--wine);
+      border: 2px solid var(--wine);
+      border-radius: 8px;
+      font-size: 14px;
+      font-family: 'Source Sans 3', sans-serif;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    /* ── Divider ── */
+    .divider {
+      max-width: 680px;
+      margin: 28px auto;
+      padding: 0 20px;
+    }
+    .divider hr { border: none; border-top: 1px solid var(--border); }
+
+    /* ── Footer ── */
+    footer {
+      text-align: center;
+      padding: 20px;
+      font-size: 11px;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+    }
+  </style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+  <div class="header-eyebrow">Wine AI Consulting · Confidential</div>
+  <h1>Winery AI Readiness<br/><em>Questionnaire</em></h1>
+  <div class="header-sub">Prepared for Scotto Family Winery · 2025</div>
+</div>
+<div class="gold-bar"></div>
+
+<!-- Main form -->
+<div id="form-body">
+
+  <!-- Intro -->
+  <div class="intro" style="margin-top:28px;">
+    <p>This questionnaire helps us tailor an AI roadmap specifically to your winery. There are no wrong answers — we just want to understand where you are today so we can show you exactly what's possible.</p>
+    <p>Complete as much as you can before our meeting; we'll work through anything that's unclear together.</p>
+    <div class="tip-box">
+      <div class="tip-label">Prep<br/>Tip</div>
+      <div class="tip-text">You don't need exact numbers — ballpark estimates are fine. If you have access to QuickBooks, your DTC platform (Commerce7, WineDirect, etc.), and last year's P&L, those three sources will cover 80% of this form.</div>
+    </div>
+  </div>
+
+  <!-- Client tag -->
+  <div class="client-banner" id="client-banner" style="display:none;">
+    <div class="client-tag">
+      <div class="dot"></div>
+      <span id="client-tag-text">Linked to client profile</span>
+    </div>
+  </div>
+
+  <!-- Progress -->
+  <div class="progress-wrap">
+    <div class="progress-label">
+      <span id="progress-text">Part 1 of 2 — Business Snapshot</span>
+      <span id="progress-pct">0% complete</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+  </div>
+
+  <form id="intake-form" novalidate>
+
+    <!-- ═══════════════════════════════════════════════════════
+         PART 1 — BUSINESS SNAPSHOT
+    ════════════════════════════════════════════════════════ -->
+    <div class="part-banner">
+      <div class="part-inner" style="background: linear-gradient(135deg, #5C1A29, #7B2438);">
+        <div class="part-eyebrow">Part 1</div>
+        <div class="part-title">Business Snapshot</div>
+        <div class="part-sub">~10 minutes · High-level numbers we'll use to build your ROI model</div>
+      </div>
+    </div>
+
+    <!-- 1A: Identity -->
+    <div class="section">
+      <div class="section-header" style="background: var(--wine);">1A — Winery Identity</div>
+      <div class="two-col">
+        <div class="field">
+          <label>Winery / Brand Name *</label>
+          <input type="text" name="wineryName" placeholder="e.g. Scotto Family Cellars" required/>
+        </div>
+        <div class="field">
+          <label>Owner / Primary Contact *</label>
+          <input type="text" name="ownerName" placeholder="e.g. Anthony Scotto" required/>
+        </div>
+      </div>
+      <div class="field">
+        <label>Tasting Room Location(s)</label>
+        <input type="text" name="tastingRoomLocation" placeholder="e.g. Lodi, CA · Clements Hills AVA"/>
+      </div>
+      <div class="two-col">
+        <div class="field">
+          <label>Number of wine labels / sub-brands</label>
+          <div class="hint">e.g. 3 — Estate, Reserve, Everyday</div>
+          <input type="number" name="numSubBrands" placeholder="3" min="1" max="50"/>
+        </div>
+        <div class="field">
+          <label>Years in business</label>
+          <input type="number" name="yearsInBusiness" placeholder="e.g. 22" min="1"/>
+        </div>
+      </div>
+      <div class="field">
+        <label>Primary sales channel</label>
+        <div class="checkbox-group" id="salesChannelGroup">
+          <label class="checkbox-option"><input type="checkbox" name="salesChannel" value="DTC"/> DTC (Tasting Room + Club)</label>
+          <label class="checkbox-option"><input type="checkbox" name="salesChannel" value="Wholesale"/> Wholesale / Distributor</label>
+          <label class="checkbox-option"><input type="checkbox" name="salesChannel" value="Both"/> Both DTC + Wholesale</label>
+        </div>
+      </div>
+    </div>
+
+    <!-- 1B: Revenue -->
+    <div class="section">
+      <div class="section-header" style="background: var(--wine);">1B — Revenue & Volume</div>
+      <p style="font-size:12px;color:var(--muted);font-style:italic;margin-bottom:12px;">Ballpark estimates are fine — we'll refine during our meeting.</p>
+      <div class="two-col">
+        <div class="field">
+          <label>Total annual revenue</label>
+          <div class="hint">e.g. $4.5M</div>
+          <input type="text" name="totalRevenue" placeholder="$4,500,000"/>
+        </div>
+        <div class="field">
+          <label>DTC revenue (% or $)</label>
+          <div class="hint">e.g. 60% or $2.7M</div>
+          <input type="text" name="dtcRevenue" placeholder="60% or $2,700,000"/>
+        </div>
+      </div>
+      <div class="two-col">
+        <div class="field">
+          <label>Wholesale / distributor revenue</label>
+          <input type="text" name="wholesaleRevenue" placeholder="e.g. $1,800,000"/>
+        </div>
+        <div class="field">
+          <label>Cases produced / year</label>
+          <div class="hint">e.g. 8,000 cases</div>
+          <input type="text" name="casesProduced" placeholder="8,000"/>
+        </div>
+      </div>
+      <div class="two-col">
+        <div class="field">
+          <label>Average bottle price (blended)</label>
+          <div class="hint">across all SKUs</div>
+          <input type="text" name="avgBottlePrice" placeholder="e.g. $28"/>
+        </div>
+        <div class="field">
+          <label>Number of active SKUs</label>
+          <input type="number" name="numSkus" placeholder="e.g. 12" min="1"/>
+        </div>
+      </div>
+    </div>
+
+    <!-- 1C: DTC & Marketing -->
+    <div class="section">
+      <div class="section-header" style="background: var(--blue);">1C — DTC & Marketing</div>
+      <div class="two-col">
+        <div class="field">
+          <label>Email list size</label>
+          <div class="hint">total subscriber count</div>
+          <input type="number" name="emailList" placeholder="e.g. 12,000" min="0"/>
+        </div>
+        <div class="field">
+          <label>Email send frequency</label>
+          <input type="text" name="emailFrequency" placeholder="e.g. 2x/month"/>
+        </div>
+      </div>
+      <div class="two-col">
+        <div class="field">
+          <label>Current email open rate</label>
+          <div class="hint">check your platform dashboard</div>
+          <input type="text" name="emailOpenRate" placeholder="e.g. 22%"/>
+        </div>
+        <div class="field">
+          <label>Wine club members (active)</label>
+          <input type="number" name="clubMembers" placeholder="e.g. 850" min="0"/>
+        </div>
+      </div>
+      <div class="two-col">
+        <div class="field">
+          <label>Tasting room visits / year</label>
+          <input type="number" name="tastingVisits" placeholder="e.g. 6,000" min="0"/>
+        </div>
+        <div class="field">
+          <label>Club conversion rate</label>
+          <div class="hint">% of visitors who join</div>
+          <input type="text" name="clubConversion" placeholder="e.g. 9%"/>
+        </div>
+      </div>
+      <div class="two-col">
+        <div class="field">
+          <label>Avg club member annual value</label>
+          <input type="text" name="clubValue" placeholder="e.g. $480/yr"/>
+        </div>
+        <div class="field">
+          <label>Hours/week on content creation</label>
+          <div class="hint">writing, social, emails</div>
+          <input type="number" name="contentHours" placeholder="e.g. 8" min="0"/>
+        </div>
+      </div>
+    </div>
+
+    <!-- 1D: Finance -->
+    <div class="section">
+      <div class="section-header" style="background: var(--green);">1D — Finance & Banking</div>
+      <div class="two-col">
+        <div class="field">
+          <label>Total loan / credit facility balance</label>
+          <input type="text" name="loanBalance" placeholder="e.g. $2,200,000"/>
+        </div>
+        <div class="field">
+          <label>Harvest line of credit</label>
+          <input type="text" name="harvestLine" placeholder="e.g. $500,000"/>
+        </div>
+      </div>
+      <div class="two-col">
+        <div class="field">
+          <label>Total inventory value (at cost)</label>
+          <div class="hint">barrel + bottle</div>
+          <input type="text" name="inventoryValue" placeholder="e.g. $1,400,000"/>
+        </div>
+        <div class="field">
+          <label>Annual grape / bulk wine spend</label>
+          <input type="text" name="grapeSpend" placeholder="e.g. $600,000"/>
+        </div>
+      </div>
+      <div class="two-col">
+        <div class="field">
+          <label>Blended team hourly rate</label>
+          <div class="hint">avg fully-loaded cost/hr</div>
+          <input type="text" name="blendedRate" placeholder="e.g. $45/hr"/>
+        </div>
+        <div class="field">
+          <label>Number of full-time employees</label>
+          <input type="number" name="numEmployees" placeholder="e.g. 12" min="1"/>
+        </div>
+      </div>
+    </div>
+
+    <!-- 1E: Sales & Distribution -->
+    <div class="section">
+      <div class="section-header" style="background: var(--purple);">1E — Sales & Distribution</div>
+      <div class="two-col">
+        <div class="field">
+          <label>Number of distributor relationships</label>
+          <input type="number" name="numDistributors" placeholder="e.g. 8" min="0"/>
+        </div>
+        <div class="field">
+          <label>States distributed into</label>
+          <input type="number" name="numStates" placeholder="e.g. 6" min="0"/>
+        </div>
+      </div>
+      <div class="two-col">
+        <div class="field">
+          <label>On-premise accounts</label>
+          <div class="hint">restaurants, hotels, bars</div>
+          <input type="number" name="onPremAccounts" placeholder="e.g. 45" min="0"/>
+        </div>
+        <div class="field">
+          <label>Off-premise accounts</label>
+          <div class="hint">retail, grocery, specialty wine</div>
+          <input type="number" name="offPremAccounts" placeholder="e.g. 30" min="0"/>
+        </div>
+      </div>
+      <div class="field">
+        <label>Active account types (check all)</label>
+        <div class="checkbox-group">
+          <label class="checkbox-option"><input type="checkbox" name="accountTypes" value="Independent restaurants"/> Independent restaurants</label>
+          <label class="checkbox-option"><input type="checkbox" name="accountTypes" value="Hotel/resort groups"/> Hotel / resort groups</label>
+          <label class="checkbox-option"><input type="checkbox" name="accountTypes" value="Retail wine shops"/> Retail wine shops</label>
+          <label class="checkbox-option"><input type="checkbox" name="accountTypes" value="Grocery/supermarket"/> Grocery / supermarket</label>
+          <label class="checkbox-option"><input type="checkbox" name="accountTypes" value="Total Wine/BevMo"/> Total Wine / BevMo</label>
+          <label class="checkbox-option"><input type="checkbox" name="accountTypes" value="Club stores"/> Club stores (Costco, etc.)</label>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════
+         PART 2 — TECHNOLOGY & OPERATIONS
+    ════════════════════════════════════════════════════════ -->
+    <div class="divider"><hr/></div>
+
+    <div class="part-banner">
+      <div class="part-inner" style="background: linear-gradient(135deg, #1a1a2e, #2C1810);">
+        <div class="part-eyebrow">Part 2</div>
+        <div class="part-title">Technology & Operations Detail</div>
+        <div class="part-sub">~20–30 minutes · Maps your current systems to the AI we'll build on top of them</div>
+      </div>
+    </div>
+
+    <!-- 2A: Core Tech Stack -->
+    <div class="section">
+      <div class="section-header" style="background: var(--wine);">2A — Core Technology Stack</div>
+      <div class="field">
+        <label>Accounting / ERP system</label>
+        <div class="hint">e.g. QuickBooks Online, NetSuite, Sage</div>
+        <input type="text" name="erpSystem" placeholder="QuickBooks Online"/>
+      </div>
+      <div class="field">
+        <label>DTC / eCommerce platform</label>
+        <div class="hint">e.g. Commerce7, WineDirect, Shopify, OrderPort</div>
+        <input type="text" name="dtcPlatform" placeholder="Commerce7"/>
+      </div>
+      <div class="two-col">
+        <div class="field">
+          <label>Point of Sale (POS) system</label>
+          <div class="hint">e.g. Commerce7 POS, Square, Revel</div>
+          <input type="text" name="posSystem" placeholder="Commerce7 POS"/>
+        </div>
+        <div class="field">
+          <label>Wine club management</label>
+          <div class="hint">or same as DTC platform</div>
+          <input type="text" name="clubSystem" placeholder="Commerce7"/>
+        </div>
+      </div>
+      <div class="two-col">
+        <div class="field">
+          <label>CRM / customer database</label>
+          <div class="hint">e.g. Commerce7, HubSpot, spreadsheet</div>
+          <input type="text" name="crmSystem" placeholder="Commerce7"/>
+        </div>
+        <div class="field">
+          <label>Email marketing platform</label>
+          <div class="hint">e.g. Mailchimp, Klaviyo, Commerce7</div>
+          <input type="text" name="emailPlatform" placeholder="Mailchimp"/>
+        </div>
+      </div>
+      <div class="field">
+        <label>Email & productivity suite</label>
+        <div class="checkbox-group">
+          <label class="checkbox-option"><input type="checkbox" name="emailSuite" value="Google Workspace"/> Google Workspace (Gmail/Drive)</label>
+          <label class="checkbox-option"><input type="checkbox" name="emailSuite" value="Microsoft 365"/> Microsoft 365 (Outlook/Teams)</label>
+          <label class="checkbox-option"><input type="checkbox" name="emailSuite" value="Mix"/> Mix of both</label>
+          <label class="checkbox-option"><input type="checkbox" name="emailSuite" value="Neither"/> Neither</label>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2B: Operations & Inventory -->
+    <div class="section">
+      <div class="section-header" style="background: var(--green);">2B — Operations & Inventory</div>
+      <div class="field">
+        <label>Winery management / production system</label>
+        <div class="hint">e.g. Ekos, Vintrace, OrchestratedBEER, spreadsheets</div>
+        <input type="text" name="wmsSystem" placeholder="Ekos"/>
+      </div>
+      <div class="two-col">
+        <div class="field">
+          <label>How often do you count physical inventory?</label>
+          <input type="text" name="inventoryCadence" placeholder="e.g. Monthly, Quarterly"/>
+        </div>
+        <div class="field">
+          <label>TTB compliance — current process</label>
+          <div class="hint">e.g. manual Excel, Ekos auto-generates, CPA handles</div>
+          <input type="text" name="ttbProcess" placeholder="Manual in Excel"/>
+        </div>
+      </div>
+      <div class="field">
+        <label>Do you receive depletion reports from distributors?</label>
+        <div class="hint">e.g. monthly Excel from rep, VIP portal, SevenFifty, we don't get them</div>
+        <input type="text" name="depletionReports" placeholder="Monthly Excel from rep"/>
+      </div>
+    </div>
+
+    <!-- 2C: Finance Detail -->
+    <div class="section">
+      <div class="section-header" style="background: var(--blue);">2C — Finance & Banking Detail</div>
+      <p style="font-size:12px;color:var(--muted);font-style:italic;margin-bottom:12px;">Powers the real-time covenant compliance dashboard — so we can alert you 30/60/90 days before any potential breach.</p>
+      <div class="two-col">
+        <div class="field">
+          <label>Lender / bank name</label>
+          <input type="text" name="lenderName" placeholder="e.g. Farm Credit, Bank of America"/>
+        </div>
+        <div class="field">
+          <label>Loan type</label>
+          <input type="text" name="loanType" placeholder="e.g. operating line + term loan"/>
+        </div>
+      </div>
+      <div class="two-col">
+        <div class="field">
+          <label>DSCR minimum required</label>
+          <div class="hint">from your loan agreement</div>
+          <input type="text" name="dscrMin" placeholder="e.g. 1.25x"/>
+        </div>
+        <div class="field">
+          <label>Current DSCR (approximate)</label>
+          <input type="text" name="dscrCurrent" placeholder="e.g. 1.31x"/>
+        </div>
+      </div>
+      <div class="field">
+        <label>How do you currently monitor covenants?</label>
+        <input type="text" name="covenantMonitoring" placeholder="e.g. CFO runs monthly Excel, CPA does quarterly, we don't track actively"/>
+      </div>
+    </div>
+
+    <!-- 2D: Marketing Detail -->
+    <div class="section">
+      <div class="section-header" style="background: var(--wine);">2D — Marketing & Content Detail</div>
+      <div class="two-col">
+        <div class="field">
+          <label>Active social media channels</label>
+          <input type="text" name="socialChannels" placeholder="e.g. Instagram, Facebook, TikTok"/>
+        </div>
+        <div class="field">
+          <label>Combined follower count (approx.)</label>
+          <input type="text" name="followerCount" placeholder="e.g. 8,500"/>
+        </div>
+      </div>
+      <div class="field">
+        <label>Describe your brand voice in 2–3 words</label>
+        <div class="hint">e.g. 'warm, family-driven, terroir-focused' — anchors the AI voice</div>
+        <input type="text" name="brandVoice" placeholder="warm, family-driven, terroir-focused"/>
+      </div>
+      <div class="field">
+        <label>What content takes you the most time today?</label>
+        <input type="text" name="contentPainPoint" placeholder="e.g. Monthly newsletter, tasting notes, social captions"/>
+      </div>
+      <div class="field">
+        <label>Which content types do you produce? (check all)</label>
+        <div class="checkbox-group">
+          <label class="checkbox-option"><input type="checkbox" name="contentTypes" value="Monthly newsletter"/> Monthly newsletter</label>
+          <label class="checkbox-option"><input type="checkbox" name="contentTypes" value="Tasting notes"/> Tasting notes</label>
+          <label class="checkbox-option"><input type="checkbox" name="contentTypes" value="Social captions"/> Social captions</label>
+          <label class="checkbox-option"><input type="checkbox" name="contentTypes" value="Wine club emails"/> Wine club emails</label>
+          <label class="checkbox-option"><input type="checkbox" name="contentTypes" value="Press releases"/> Press releases</label>
+          <label class="checkbox-option"><input type="checkbox" name="contentTypes" value="Event invites"/> Event invites</label>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2E: Wholesale Detail -->
+    <div class="section">
+      <div class="section-header" style="background: var(--green);">2E — Wholesale & Trade Detail</div>
+      <div class="field">
+        <label>Top 2–3 distributor partners by name</label>
+        <input type="text" name="topDistributors" placeholder="e.g. Southern Glazer's CA, Young's Market NV"/>
+      </div>
+      <div class="two-col">
+        <div class="field">
+          <label>FOB price range across SKUs</label>
+          <div class="hint">e.g. $8 FOB (everyday) to $28 FOB (reserve)</div>
+          <input type="text" name="fobRange" placeholder="$8 – $28 FOB"/>
+        </div>
+        <div class="field">
+          <label>Any known DTC vs. wholesale pricing conflicts?</label>
+          <input type="text" name="pricingConflicts" placeholder="e.g. Wine-Searcher undercuts tasting room"/>
+        </div>
+      </div>
+      <div class="field">
+        <label>How long to produce a sell sheet or vintage fact sheet?</label>
+        <input type="text" name="tradeAssetTime" placeholder="e.g. 4 hours, we outsource it, we don't have them"/>
+      </div>
+      <div class="field">
+        <label>Any chain / key accounts? (Total Wine, BevMo, grocery)</label>
+        <input type="text" name="chainAccounts" placeholder="e.g. Yes — Total Wine CA & NV, Raley's"/>
+      </div>
+      <div class="field">
+        <label>Biggest wholesale challenge right now</label>
+        <textarea name="wholesaleChallenge" placeholder="e.g. 'reps aren't pushing our SKUs', 'we miss promo windows', 'hard to track depletion across 8 distributors'"></textarea>
+      </div>
+    </div>
+
+    <!-- 2F: Module Priority -->
+    <div class="section">
+      <div class="section-header" style="background: var(--wine);">2F — Where Do You Want to Start?</div>
+      <p style="font-size:13px;color:var(--mid);margin-bottom:14px;">Which areas feel most painful or have the biggest opportunity right now? Check all that apply.</p>
+      <div class="module-list" id="moduleList">
+        <label class="module-item"><input type="checkbox" name="modules" value="Marketing & Content Engine"/>
+          <div class="module-check">✓</div>
+          <div><div class="module-name">Marketing & Content Engine</div><div class="module-benefit">Save 10+ hrs/week · 2–3x email revenue</div></div>
+        </label>
+        <label class="module-item"><input type="checkbox" name="modules" value="Sales & Tasting Room"/>
+          <div class="module-check">✓</div>
+          <div><div class="module-name">Sales & Tasting Room</div><div class="module-benefit">Convert more visitors · reactivate lapsed club members</div></div>
+        </label>
+        <label class="module-item"><input type="checkbox" name="modules" value="Inventory & Demand Forecasting"/>
+          <div class="module-check">✓</div>
+          <div><div class="module-name">Inventory & Demand Forecasting</div><div class="module-benefit">Stop over-buying grapes · prevent stockouts</div></div>
+        </label>
+        <label class="module-item"><input type="checkbox" name="modules" value="Finance & Covenant Dashboard"/>
+          <div class="module-check">✓</div>
+          <div><div class="module-name">Finance & Covenant Dashboard</div><div class="module-benefit">Real-time covenant monitoring · breach alerts</div></div>
+        </label>
+        <label class="module-item"><input type="checkbox" name="modules" value="Grape Procurement"/>
+          <div class="module-check">✓</div>
+          <div><div class="module-name">Grape Procurement</div><div class="module-benefit">Smarter harvest contracts · grower relationships</div></div>
+        </label>
+        <label class="module-item"><input type="checkbox" name="modules" value="Regulatory Compliance"/>
+          <div class="module-check">✓</div>
+          <div><div class="module-name">Regulatory Compliance</div><div class="module-benefit">Automate TTB reporting · state shipping compliance</div></div>
+        </label>
+        <label class="module-item"><input type="checkbox" name="modules" value="Wholesale & Trade"/>
+          <div class="module-check">✓</div>
+          <div><div class="module-name">Wholesale & Trade</div><div class="module-benefit">Distributor comms · pricing stack · trade assets · channel intel</div></div>
+        </label>
+      </div>
+    </div>
+
+    <!-- 2G: Open Questions -->
+    <div class="section">
+      <div class="section-header" style="background: #4A4A5A;">2G — Questions & Concerns</div>
+      <div class="field">
+        <label>What's your biggest concern about implementing AI in the winery?</label>
+        <textarea name="biggestConcern" placeholder="e.g. 'cost of implementation', 'my team won't use it', 'data privacy', 'don't know where to start'"></textarea>
+      </div>
+      <div class="field">
+        <label>Anything we should know about your team or operations before we meet?</label>
+        <textarea name="openNotes" placeholder="e.g. 'We have a part-time marketing person', 'our accountant handles QuickBooks', 'we're mid-harvest until November'"></textarea>
+      </div>
+    </div>
+
+    <!-- Submit -->
+    <div class="submit-wrap">
+      <button type="submit" class="submit-btn">Submit My Intake Form →</button>
+      <p class="submit-note">
+        Your responses are saved securely and shared only with your Wine AI Consulting advisor.<br/>
+        On submit, a backup copy downloads to your device automatically.
+      </p>
+    </div>
+
+  </form>
+
+  <!-- Success Screen -->
+  <div class="success-screen" id="success-screen">
+    <div class="success-icon">🍷</div>
+    <div class="success-title">Thank you, <span id="success-name">Anthony</span>.</div>
+    <div class="success-sub">
+      Your intake form has been saved. Your advisor will review your responses before your meeting.<br/>
+      A backup copy has been downloaded to your device as <strong id="success-filename">syrah-intake.json</strong>.
+    </div>
+    <div class="success-actions">
+      <button class="btn-download" id="redownload-btn">Download JSON Again</button>
+      <button class="btn-secondary" onclick="window.print()">Print / Save PDF</button>
+    </div>
+  </div>
+
+</div><!-- /form-body -->
+
+<footer>
+  Wine AI Consulting &nbsp;·&nbsp; Winery AI Readiness Questionnaire &nbsp;·&nbsp; Confidential &nbsp;·&nbsp; 2025
+</footer>
+
+<script>
+// ── Client ID from URL param ───────────────────────────────────────────────
+const urlParams = new URLSearchParams(window.location.search);
+const clientId = urlParams.get('client') || 'unknown';
+const clientLabel = clientId.charAt(0).toUpperCase() + clientId.slice(1);
+
+if (clientId !== 'unknown') {
+  const banner = document.getElementById('client-banner');
+  banner.style.display = 'block';
+  document.getElementById('client-tag-text').textContent =
+    `Linked to client profile: ${clientLabel}`;
+  // Update page subtitle
+  document.querySelector('.header-sub').textContent =
+    `Prepared for ${clientLabel} Winery · 2025`;
+}
+
+// ── Checkbox styling ───────────────────────────────────────────────────────
+document.querySelectorAll('.checkbox-option input').forEach(input => {
+  input.addEventListener('change', () => {
+    input.closest('.checkbox-option').classList.toggle('checked', input.checked);
+    updateProgress();
+  });
+});
+
+document.querySelectorAll('.module-item input').forEach(input => {
+  input.addEventListener('change', () => {
+    input.closest('.module-item').classList.toggle('checked', input.checked);
+    updateProgress();
+  });
+});
+
+// ── Progress ───────────────────────────────────────────────────────────────
+const allInputs = document.querySelectorAll('input[type=text], input[type=number], textarea');
+allInputs.forEach(el => el.addEventListener('input', updateProgress));
+
+function updateProgress() {
+  const textInputs = document.querySelectorAll('input[type=text], input[type=number], textarea');
+  const filled = Array.from(textInputs).filter(el => el.value.trim() !== '').length;
+  const pct = Math.round((filled / textInputs.length) * 100);
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('progress-pct').textContent = pct + '% complete';
+  if (pct < 35) {
+    document.getElementById('progress-text').textContent = 'Part 1 of 2 — Business Snapshot';
+  } else if (pct < 70) {
+    document.getElementById('progress-text').textContent = 'Part 2 of 2 — Technology & Operations';
+  } else {
+    document.getElementById('progress-text').textContent = 'Almost done!';
+  }
+}
+
+// ── Collect form data ──────────────────────────────────────────────────────
+function collectFormData() {
+  const data = {
+    _meta: {
+      clientId: clientId,
+      submittedAt: new Date().toISOString(),
+      formVersion: '1.0'
+    }
+  };
+
+  // Text / number inputs
+  document.querySelectorAll('input[type=text], input[type=number], textarea').forEach(el => {
+    if (el.name) data[el.name] = el.value.trim();
+  });
+
+  // Checkboxes — collect as arrays
+  const checkboxNames = ['salesChannel', 'accountTypes', 'emailSuite', 'contentTypes', 'modules'];
+  checkboxNames.forEach(name => {
+    data[name] = Array.from(document.querySelectorAll(`input[name="${name}"]:checked`))
+      .map(el => el.value);
+  });
+
+  return data;
+}
+
+// ── localStorage save ──────────────────────────────────────────────────────
+function saveToLocalStorage(data) {
+  try {
+    const STORAGE_KEY = 'wineai_clients';
+    let clients = [];
+    try { clients = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); } catch {}
+
+    // Parse numeric fields for blueprint compatibility
+    const profile = {
+      ...data,
+      clientId: clientId,
+      wineryName: data.wineryName || clientLabel + ' Winery',
+      codename: clientId,
+      status: 'Prospect',
+      intakeCompleted: true,
+      intakeDate: new Date().toISOString(),
+      // Numeric mappings for blueprint sliders
+      emailList: parseInt(data.emailList) || 0,
+      clubMembers: parseInt(data.clubMembers) || 0,
+      tastingVisits: Math.round((parseInt(data.tastingVisits) || 0) / 12),
+      clubConversion: parseFloat(data.clubConversion) || 9,
+      avgClubValue: parseFloat((data.clubValue || '').replace(/[^0-9.]/g,'')) || 480,
+      numDistributors: parseInt(data.numDistributors) || 0,
+      numStates: parseInt(data.numStates) || 0,
+      blendedRate: parseFloat((data.blendedRate || '').replace(/[^0-9.]/g,'')) || 45,
+      techStack: (data.emailSuite || []).includes('Microsoft 365') ? 'MSFT' : 'Standard',
+      modulesActivated: data.modules || [],
+    };
+
+    // Update or add
+    const idx = clients.findIndex(c => c.clientId === clientId || c.codename === clientId);
+    if (idx >= 0) clients[idx] = { ...clients[idx], ...profile };
+    else clients.push(profile);
+
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(clients));
+    return true;
+  } catch (e) {
+    console.error('localStorage save failed:', e);
+    return false;
+  }
+}
+
+// ── JSON download ──────────────────────────────────────────────────────────
+let lastData = null;
+
+function downloadJSON(data) {
+  const json = JSON.stringify(data, null, 2);
+  const blob = new Blob([json], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `${clientId}-intake.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+// ── Submit ─────────────────────────────────────────────────────────────────
+document.getElementById('intake-form').addEventListener('submit', function(e) {
+  e.preventDefault();
+
+  const data = collectFormData();
+  lastData = data;
+
+  // Save to localStorage
+  saveToLocalStorage(data);
+
+  // Download JSON
+  downloadJSON(data);
+
+  // Show success screen
+  document.getElementById('intake-form').style.display = 'none';
+  const success = document.getElementById('success-screen');
+  success.style.display = 'block';
+  success.scrollIntoView({ behavior: 'smooth' });
+
+  document.getElementById('success-name').textContent = data.ownerName || clientLabel;
+  document.getElementById('success-filename').textContent = `${clientId}-intake.json`;
+  document.getElementById('progress-fill').style.width = '100%';
+  document.getElementById('progress-pct').textContent = '100% complete';
+});
+
+// Re-download button
+document.getElementById('redownload-btn').addEventListener('click', () => {
+  if (lastData) downloadJSON(lastData);
+});
+</script>
+
+</body>
+</html>
