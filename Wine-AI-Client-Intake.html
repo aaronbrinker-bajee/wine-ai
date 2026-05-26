@@ -382,7 +382,7 @@
 <div class="header">
   <div class="header-eyebrow">Wine AI Consulting · Confidential</div>
   <h1>Winery AI Readiness<br/><em>Questionnaire</em></h1>
-  <div class="header-sub" id="form-subtitle">Prepared for &mdash; · Version 1 · 2025</div>
+  <div class="header-sub" id="form-subtitle">Prepared for —</div>
 </div>
 <div class="gold-bar"></div>
 
@@ -907,9 +907,8 @@ const today = new Date().toLocaleDateString('en-US', {year:'numeric', month:'lon
 // Update subtitle dynamically
 function updateSubtitle(wineryName) {
   const name = wineryName || (clientId !== 'unknown' ? clientLabel + ' Winery' : '—');
-  const vLabel = version !== '1' ? \` · Version \${version}\` : '';
-  document.getElementById('form-subtitle').textContent =
-    \`Prepared for \${name}\${vLabel} · \${today}\`;
+    const vLabel = version !== '1' ? ' · Version ' + version : '';
+  document.getElementById('form-subtitle').textContent = 'Prepared for ' + name + vLabel + ' · ' + today;
 }
 updateSubtitle(null);
 
