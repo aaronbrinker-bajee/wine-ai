@@ -1094,16 +1094,23 @@ document.getElementById('intake-form').addEventListener('submit', function(e) {
   saveToLocalStorage(data);
 
   // POST to Google Sheets webhook
+  // Use no-cors simple request (no Content-Type header) to bypass CORS preflight
   var webhookUrl = 'https://script.google.com/macros/s/AKfycbzW6uPh5LD50Ico075RTqF7KvZpTiGLhYvAwAO_n7rm2lcYqJTJmAs5qrIy4npVQcsN/exec';
-  if (webhookUrl !== 'YOUR_APPS_SCRIPT_URL_HERE') {
+  try {
+    // Encode as URL params — this is a "simple request" that bypasses CORS preflight
+    var params = new URLSearchParams();
+    params.append('payload', JSON.stringify(data));
     fetch(webhookUrl, {
       method: 'POST',
       mode: 'no-cors',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
+      body: params
+    }).then(function() {
+      console.log('Webhook sent');
     }).catch(function(err) {
-      console.log('Webhook error (non-blocking):', err);
+      console.log('Webhook error:', err);
     });
+  } catch(e) {
+    console.log('Webhook exception:', e);
   }
 
   // Download JSON as backup
