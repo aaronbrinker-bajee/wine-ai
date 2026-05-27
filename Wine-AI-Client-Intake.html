@@ -385,17 +385,7 @@
   <div class="header-sub" id="form-subtitle">Prepared for —</div>
 </div>
 <div class="gold-bar"></div>
-<script>
-(function() {
-  var params = new URLSearchParams(window.location.search);
-  var clientId = params.get('client') || '';
-  var version = params.get('v') || '1';
-  var clientLabel = clientId ? clientId.charAt(0).toUpperCase() + clientId.slice(1) + ' Winery' : '—';
-  var today = new Date().toLocaleDateString('en-US', {year:'numeric', month:'long', day:'numeric'});
-  var vLabel = version !== '1' ? ' · Version ' + version : '';
-  document.getElementById('form-subtitle').textContent = 'Prepared for ' + clientLabel + vLabel + ' · ' + today;
-})();
-</script>
+
 
 <!-- Main form -->
 <div id="form-body">
@@ -908,48 +898,50 @@
 </footer>
 
 <script>
-// ── Client ID from URL param ───────────────────────────────────────────────
-const urlParams = new URLSearchParams(window.location.search);
-const clientId = urlParams.get('client') || 'unknown';
-const clientLabel = clientId.charAt(0).toUpperCase() + clientId.slice(1);
-const version = urlParams.get('v') || '1';
-const today = new Date().toLocaleDateString('en-US', {year:'numeric', month:'long', day:'numeric'});
+// ── Single unified script — all logic in one DOMContentLoaded ──────────────
+document.addEventListener('DOMContentLoaded', function() {
 
-// Update subtitle dynamically
-function updateSubtitle(wineryName) {
-  const name = wineryName || (clientId !== 'unknown' ? clientLabel + ' Winery' : '—');
-    const vLabel = version !== '1' ? ' · Version ' + version : '';
-  document.getElementById('form-subtitle').textContent = 'Prepared for ' + name + vLabel + ' · ' + today;
-}
-if (clientId !== 'unknown') {
-  const banner = document.getElementById('client-banner');
-  banner.style.display = 'block';
-  document.getElementById('client-tag-text').textContent =
-    version !== '1'
-      ? \`Linked to client profile: \${clientLabel} · Version \${version}\`
-      : \`Linked to client profile: \${clientLabel}\`;
-}
+  // ── URL params ────────────────────────────────────────────────────────────
+  var urlParams = new URLSearchParams(window.location.search);
+  var clientId = urlParams.get('client') || 'unknown';
+  var version = urlParams.get('v') || '1';
+  var clientLabel = clientId !== 'unknown'
+    ? clientId.charAt(0).toUpperCase() + clientId.slice(1)
+    : '—';
+  var today = new Date().toLocaleDateString('en-US', {year:'numeric', month:'long', day:'numeric'});
 
-// Update subtitle live as winery name is typed
-document.addEventListener('DOMContentLoaded', () => {
-  // Set subtitle now that DOM is ready
+  // ── Subtitle ──────────────────────────────────────────────────────────────
+  function updateSubtitle(wineryName) {
+    var name = wineryName || (clientId !== 'unknown' ? clientLabel + ' Winery' : '—');
+    var vLabel = version !== '1' ? ' · Version ' + version : '';
+    var el = document.getElementById('form-subtitle');
+    if (el) el.textContent = 'Prepared for ' + name + vLabel + ' · ' + today;
+  }
   updateSubtitle(null);
 
-  const nameField = document.querySelector('input[name="wineryName"]');
+  // ── Client banner ─────────────────────────────────────────────────────────
+  if (clientId !== 'unknown') {
+    var banner = document.getElementById('client-banner');
+    if (banner) banner.style.display = 'block';
+    var tagEl = document.getElementById('client-tag-text');
+    if (tagEl) tagEl.textContent = version !== '1'
+      ? 'Linked to client profile: ' + clientLabel + ' · Version ' + version
+      : 'Linked to client profile: ' + clientLabel;
+  }
+
+  // ── Live subtitle update as winery name is typed ──────────────────────────
+  var nameField = document.querySelector('input[name="wineryName"]');
   if (nameField) {
-    nameField.addEventListener('input', () => {
+    nameField.addEventListener('input', function() {
       updateSubtitle(nameField.value.trim() || null);
     });
   }
-});
 
-// ── Checkbox styling ───────────────────────────────────────────────────────
-function initCheckboxes() {
+  // ── Checkbox visual feedback ──────────────────────────────────────────────
   document.querySelectorAll('.checkbox-option').forEach(function(label) {
     label.addEventListener('click', function(e) {
       var input = label.querySelector('input[type="checkbox"]');
       if (!input) return;
-      // Toggle checked state
       input.checked = !input.checked;
       label.classList.toggle('checked', input.checked);
       updateProgress();
@@ -963,189 +955,157 @@ function initCheckboxes() {
       if (!input) return;
       input.checked = !input.checked;
       label.classList.toggle('checked', input.checked);
-      label.querySelector('.module-check').textContent = input.checked ? '✓' : '';
+      var check = label.querySelector('.module-check');
+      if (check) check.textContent = input.checked ? '✓' : '';
       updateProgress();
       e.preventDefault();
     });
   });
-}
-initCheckboxes();
 
-// ── Progress ───────────────────────────────────────────────────────────────
-const allInputs = document.querySelectorAll('input[type=text], input[type=number], textarea');
-allInputs.forEach(el => el.addEventListener('input', updateProgress));
-
-function updateProgress() {
-  const textInputs = document.querySelectorAll('input[type=text], input[type=number], textarea');
-  const filled = Array.from(textInputs).filter(el => el.value.trim() !== '').length;
-  const pct = Math.round((filled / textInputs.length) * 100);
-  document.getElementById('progress-fill').style.width = pct + '%';
-  document.getElementById('progress-pct').textContent = pct + '% complete';
-  if (pct < 35) {
-    document.getElementById('progress-text').textContent = 'Part 1 of 2 — Business Snapshot';
-  } else if (pct < 70) {
-    document.getElementById('progress-text').textContent = 'Part 2 of 2 — Technology & Operations';
-  } else {
-    document.getElementById('progress-text').textContent = 'Almost done!';
-  }
-}
-
-// ── Collect form data ──────────────────────────────────────────────────────
-function collectFormData() {
-  const data = {
-    _meta: {
-      clientId: clientId,
-      submittedAt: new Date().toISOString(),
-      formVersion: '1.0', intakeVersion: version
+  // ── Progress ──────────────────────────────────────────────────────────────
+  function updateProgress() {
+    var textInputs = document.querySelectorAll('input[type=text], input[type=number], textarea');
+    var filled = Array.from(textInputs).filter(function(el) { return el.value.trim() !== ''; }).length;
+    var pct = Math.round((filled / textInputs.length) * 100);
+    var fill = document.getElementById('progress-fill');
+    var pctEl = document.getElementById('progress-pct');
+    var textEl = document.getElementById('progress-text');
+    if (fill) fill.style.width = pct + '%';
+    if (pctEl) pctEl.textContent = pct + '% complete';
+    if (textEl) {
+      if (pct < 35) textEl.textContent = 'Part 1 of 2 — Business Snapshot';
+      else if (pct < 70) textEl.textContent = 'Part 2 of 2 — Technology & Operations';
+      else textEl.textContent = 'Almost done!';
     }
-  };
+  }
 
-  // Text / number inputs
-  document.querySelectorAll('input[type=text], input[type=number], textarea').forEach(el => {
-    if (el.name) data[el.name] = el.value.trim();
-  });
+  var allInputs = document.querySelectorAll('input[type=text], input[type=number], textarea');
+  allInputs.forEach(function(el) { el.addEventListener('input', updateProgress); });
 
-  // Checkboxes — collect as arrays
-  const checkboxNames = ['salesChannel', 'accountTypes', 'emailSuite', 'contentTypes', 'modules'];
-  checkboxNames.forEach(name => {
-    data[name] = Array.from(document.querySelectorAll(`input[name="${name}"]:checked`))
-      .map(el => el.value);
-  });
-
-  return data;
-}
-
-// ── localStorage save ──────────────────────────────────────────────────────
-function saveToLocalStorage(data) {
-  try {
-    const STORAGE_KEY = 'wineai_clients';
-    let clients = [];
-    try { clients = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); } catch {}
-
-    // Parse numeric fields for blueprint compatibility
-    const profile = {
-      ...data,
-      clientId: clientId,
-      wineryName: data.wineryName || clientLabel + ' Winery',
-      codename: clientId,
-      status: 'Prospect',
-      intakeCompleted: true,
-      intakeDate: new Date().toISOString(),
-      // Numeric mappings for blueprint sliders
-      emailList: parseInt(data.emailList) || 0,
-      clubMembers: parseInt(data.clubMembers) || 0,
-      tastingVisits: Math.round((parseInt(data.tastingVisits) || 0) / 12),
-      clubConversion: parseFloat(data.clubConversion) || 9,
-      avgClubValue: parseFloat((data.clubValue || '').replace(/[^0-9.]/g,'')) || 480,
-      numDistributors: parseInt(data.numDistributors) || 0,
-      numStates: parseInt(data.numStates) || 0,
-      blendedRate: parseFloat((data.blendedRate || '').replace(/[^0-9.]/g,'')) || 45,
-      techStack: (data.emailSuite || []).includes('Microsoft 365') ? 'MSFT' : 'Standard',
-      modulesActivated: data.modules || [],
+  // ── Collect form data ─────────────────────────────────────────────────────
+  function collectFormData() {
+    var data = {
+      _meta: {
+        clientId: clientId,
+        submittedAt: new Date().toISOString(),
+        formVersion: '1.0',
+        intakeVersion: version
+      }
     };
-
-    // Update or add
-    const idx = clients.findIndex(c => c.clientId === clientId || c.codename === clientId);
-    if (idx >= 0) clients[idx] = { ...clients[idx], ...profile };
-    else clients.push(profile);
-
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(clients));
-    return true;
-  } catch (e) {
-    console.error('localStorage save failed:', e);
-    return false;
-  }
-}
-
-// ── JSON download ──────────────────────────────────────────────────────────
-let lastData = null;
-
-function downloadJSON(data) {
-  try {
-    var json = JSON.stringify(data, null, 2);
-    var filename = (version !== '1')
-      ? clientId + '-intake-v' + version + '.json'
-      : clientId + '-intake.json';
-    // Use data URI — works reliably on GitHub Pages
-    var dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(json);
-    var a = document.createElement('a');
-    a.setAttribute('href', dataUri);
-    a.setAttribute('download', filename);
-    a.style.display = 'none';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-  } catch(err) {
-    console.log('Download error:', err);
-    // Fallback: show data in new tab
-    var w = window.open();
-    if (w) w.document.write('<pre>' + JSON.stringify(data, null, 2) + '</pre>');
-  }
-}
-
-// ── Submit ─────────────────────────────────────────────────────────────────
-document.addEventListener('DOMContentLoaded', function() {
-  var intakeForm = document.getElementById('intake-form');
-  if (!intakeForm) { console.error('intake-form not found'); return; }
-
-  intakeForm.addEventListener('submit', function(e) {
-  e.preventDefault();
-  e.stopPropagation();
-
-  const data = collectFormData();
-  lastData = data;
-
-  // Save to localStorage
-  saveToLocalStorage(data);
-
-  // POST to Google Sheets webhook
-  // Use no-cors simple request (no Content-Type header) to bypass CORS preflight
-  var webhookUrl = 'https://script.google.com/macros/s/AKfycbzW6uPh5LD50Ico075RTqF7KvZpTiGLhYvAwAO_n7rm2lcYqJTJmAs5qrIy4npVQcsN/exec';
-  try {
-    // Encode as URL params — this is a "simple request" that bypasses CORS preflight
-    var params = new URLSearchParams();
-    params.append('payload', JSON.stringify(data));
-    fetch(webhookUrl, {
-      method: 'POST',
-      mode: 'no-cors',
-      body: params
-    }).then(function() {
-      console.log('Webhook sent');
-    }).catch(function(err) {
-      console.log('Webhook error:', err);
+    document.querySelectorAll('input[type=text], input[type=number], textarea').forEach(function(el) {
+      if (el.name) data[el.name] = el.value.trim();
     });
-  } catch(e) {
-    console.log('Webhook exception:', e);
+    ['salesChannel','accountTypes','emailSuite','contentTypes','modules'].forEach(function(name) {
+      data[name] = Array.from(document.querySelectorAll('input[name="' + name + '"]:checked'))
+        .map(function(el) { return el.value; });
+    });
+    return data;
   }
 
-  // Download JSON as backup
-  downloadJSON(data);
-
-  // Show success screen
-  var formEl = document.getElementById('intake-form');
-  var successEl = document.getElementById('success-screen');
-  if (formEl) formEl.style.display = 'none';
-  if (successEl) {
-    successEl.style.display = 'block';
-    successEl.style.maxWidth = '680px';
-    successEl.style.margin = '60px auto';
-    successEl.style.padding = '0 20px';
-    successEl.style.textAlign = 'center';
-    setTimeout(function() {
-      successEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 100);
+  // ── Save to localStorage ──────────────────────────────────────────────────
+  function saveToLocalStorage(data) {
+    try {
+      var STORAGE_KEY = 'wineai_clients';
+      var clients = [];
+      try { clients = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); } catch(e) {}
+      var profile = Object.assign({}, data, {
+        clientId: clientId, codename: clientId, status: 'Prospect',
+        intakeCompleted: true, intakeDate: new Date().toISOString(),
+        emailList: parseInt(data.emailList) || 0,
+        clubMembers: parseInt(data.clubMembers) || 0,
+        tastingVisits: Math.round((parseInt(data.tastingVisits) || 0) / 12),
+        numDistributors: parseInt(data.numDistributors) || 0,
+        numStates: parseInt(data.numStates) || 0,
+        blendedRate: parseFloat((data.blendedRate || '').replace(/[^0-9.]/g,'')) || 45,
+        techStack: (data.emailSuite || []).includes('Microsoft 365') ? 'MSFT' : 'Standard',
+        modulesActivated: data.modules || []
+      });
+      var idx = clients.findIndex(function(c) { return c.clientId === clientId || c.codename === clientId; });
+      if (idx >= 0) clients[idx] = Object.assign(clients[idx], profile);
+      else clients.push(profile);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(clients));
+    } catch(e) { console.error('localStorage error:', e); }
   }
 
-  document.getElementById('success-name').textContent = data.ownerName || clientLabel;
-  document.getElementById('success-filename').textContent = version !== '1' ? `${clientId}-intake-v${version}.json` : `${clientId}-intake.json`;
-  document.getElementById('progress-fill').style.width = '100%';
-  document.getElementById('progress-pct').textContent = '100% complete';
-});
+  // ── Download JSON ─────────────────────────────────────────────────────────
+  var lastData = null;
+  function downloadJSON(data) {
+    try {
+      var json = JSON.stringify(data, null, 2);
+      var filename = version !== '1' ? clientId + '-intake-v' + version + '.json' : clientId + '-intake.json';
+      var dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(json);
+      var a = document.createElement('a');
+      a.setAttribute('href', dataUri);
+      a.setAttribute('download', filename);
+      a.style.display = 'none';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    } catch(e) {
+      var w = window.open();
+      if (w) w.document.write('<pre>' + JSON.stringify(data, null, 2) + '</pre>');
+    }
+  }
 
-// Re-download button
-  document.getElementById('redownload-btn').addEventListener('click', () => {
-    if (lastData) downloadJSON(lastData);
-  });
+  // ── Submit handler ────────────────────────────────────────────────────────
+  var intakeForm = document.getElementById('intake-form');
+  if (intakeForm) {
+    intakeForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+
+      var data = collectFormData();
+      lastData = data;
+
+      // 1. Save to localStorage
+      saveToLocalStorage(data);
+
+      // 2. POST to Google Sheets webhook
+      try {
+        var params = new URLSearchParams();
+        params.append('payload', JSON.stringify(data));
+        fetch('https://script.google.com/macros/s/AKfycbzW6uPh5LD50Ico075RTqF7KvZpTiGLhYvAwAO_n7rm2lcYqJTJmAs5qrIy4npVQcsN/exec', {
+          method: 'POST',
+          mode: 'no-cors',
+          body: params
+        }).catch(function(err) { console.log('Webhook error:', err); });
+      } catch(e) { console.log('Webhook exception:', e); }
+
+      // 3. Download JSON backup
+      downloadJSON(data);
+
+      // 4. Show success screen
+      intakeForm.style.display = 'none';
+      var successEl = document.getElementById('success-screen');
+      if (successEl) {
+        successEl.style.display = 'block';
+        setTimeout(function() {
+          successEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 100);
+      }
+
+      // 5. Update success screen text
+      var nameEl = document.getElementById('success-name');
+      if (nameEl) nameEl.textContent = data.ownerName || clientLabel;
+      var fileEl = document.getElementById('success-filename');
+      if (fileEl) fileEl.textContent = version !== '1'
+        ? clientId + '-intake-v' + version + '.json'
+        : clientId + '-intake.json';
+      var progFill = document.getElementById('progress-fill');
+      var progPct = document.getElementById('progress-pct');
+      if (progFill) progFill.style.width = '100%';
+      if (progPct) progPct.textContent = '100% complete';
+    });
+  }
+
+  // ── Re-download button ────────────────────────────────────────────────────
+  var redownloadBtn = document.getElementById('redownload-btn');
+  if (redownloadBtn) {
+    redownloadBtn.addEventListener('click', function() {
+      if (lastData) downloadJSON(lastData);
+    });
+  }
+
 }); // end DOMContentLoaded
 </script>
 
