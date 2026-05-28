@@ -463,7 +463,7 @@
 
 <!-- STICKY ACTIONS -->
 <div class="actions-bar no-print" id="actionsBar" style="display:none;">
-  <button class="btn-save" onclick="saveToProfile()">💾 Save to Client Profile</button>
+  <button class="btn-save" onclick="saveToProfile()">💾 Save & Return to Playbook</button>
   <div class="spacer"></div>
   <button class="btn-secondary" onclick="document.getElementById('inputPanel').scrollIntoView({behavior:'smooth'})">✏️ Edit Inputs</button>
   <button class="btn-export" onclick="window.print()">📄 Export PDF Leave-Behind</button>
@@ -908,13 +908,15 @@ async function runAudit() {
 function saveToProfile() {
   if (!window._lastAuditData) return;
   const { inputs, parsed } = window._lastAuditData;
-  const p = new URLSearchParams(window.location.search);
-  const clientKey = p.get('client') || inputs.wineryName.toLowerCase().replace(/\s+/g, '_');
+  const urlP = new URLSearchParams(window.location.search);
+  const clientKey = urlP.get('client') || inputs.wineryName.toLowerCase().replace(/\s+/g, '_');
+  const returnUrl = urlP.get('returnUrl') || '';
 
   try {
-    // Update the shared client localStorage profile
+    // Save to github.io localStorage for audit recall
     const existingRaw = localStorage.getItem('wineai_client_' + clientKey);
     const existing = existingRaw ? JSON.parse(existingRaw) : {};
+    const channels = (parsed.channels || []).reduce((acc, ch) => { acc[ch.name] = ch.rating; return acc; }, {});
     const updated = Object.assign({}, existing, {
       wineryName: inputs.wineryName,
       ownerName: inputs.ownerName,
@@ -926,35 +928,40 @@ function saveToProfile() {
         runAt: new Date().toISOString(),
         overallScore: parsed.overallScore,
         overallLabel: parsed.overallLabel,
-        channelRatings: (parsed.channels || []).reduce((acc, ch) => { acc[ch.name] = ch.rating; return acc; }, {}),
+        channelRatings: channels,
         topOpportunity: parsed.opportunities?.[0]?.title || '',
         quickWin1: parsed.quickWins?.[0]?.title || '',
-      }
+      },
+      coworkStatus: Object.assign({}, existing.coworkStatus || {}, { marketingAuditRun: true })
     });
     localStorage.setItem('wineai_client_' + clientKey, JSON.stringify(updated));
-
-    // Also save full audit for recall
     localStorage.setItem('wineai_audit_' + clientKey, JSON.stringify(parsed));
 
-    const badge = document.getElementById('savedBadge');
-    badge.className = 'saved-badge visible';
-    setTimeout(() => { badge.className = 'saved-badge'; }, 3000);
-
-    // Mark the engagement step in coworkStatus
-    try {
-      const cs = (typeof updated.coworkStatus === 'object' && updated.coworkStatus) 
-        ? updated.coworkStatus 
-        : {};
-      cs.marketingAuditRun = true;
-      updated.coworkStatus = cs;
-      localStorage.setItem('wineai_client_' + clientKey, JSON.stringify(updated));
-    } catch(e) {}
-
+    // URL HANDOFF: encode audit data and return to local playbook
+    if (returnUrl) {
+      const score = parsed.overallScore;
+      const label = encodeURIComponent(parsed.overallLabel || '');
+      const opp   = encodeURIComponent(parsed.opportunities?.[0]?.title || '');
+      const win1  = encodeURIComponent(parsed.quickWins?.[0]?.title || '');
+      const chans = encodeURIComponent(JSON.stringify(channels));
+      const handoff = returnUrl
+        + '?importAudit=' + clientKey
+        + '&score=' + score
+        + '&label=' + label
+        + '&opportunity=' + opp
+        + '&win1=' + win1
+        + '&channels=' + chans;
+      const badge = document.getElementById('savedBadge');
+      if (badge) { badge.className = 'saved-badge visible'; badge.textContent = '\u2713 Saved! Returning to playbook...'; }
+      setTimeout(() => { window.location.href = handoff; }, 1200);
+    } else {
+      const badge = document.getElementById('savedBadge');
+      if (badge) { badge.className = 'saved-badge visible'; setTimeout(() => { badge.className = 'saved-badge'; }, 3000); }
+    }
   } catch(e) {
-    alert('Could not save to profile: ' + e.message);
+    alert('Could not save: ' + e.message);
   }
 }
-
 // ── API KEY RESET ─────────────────────────────────────────────
 function resetApiKey() {
   localStorage.removeItem('wineai_anthropic_key');
