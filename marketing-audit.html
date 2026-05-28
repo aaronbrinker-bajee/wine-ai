@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Wine AI — Marketing Audit</title>
+  <meta name="color-scheme" content="only light"/>
+  <style>
+    :root {
+      color-scheme: only light !important;
+      --cream: #F5EDE8;
+      --parchment: #EDE0D6;
+      --wine: #7C3048;
+      --wine-dark: #5A1E32;
+      --wine-light: #A0405C;
+      --copper: #C4600A;
+      --copper-light: #E07830;
+      --amber: #C4830A;
+      --ink: #2C1810;
+      --ink-light: #7A5A48;
+      --ink-faint: #B09080;
+      --white: #FFFFFF;
+      --green: #2D7A4F;
+      --green-light: #4ade80;
+      --yellow: #C4830A;
+      --red: #8B2020;
+      --purple: #6B3FA0;
+      --purple-light: #c084fc;
+      --shadow: rgba(44,24,16,0.12);
+    }
+    html, body { background: var(--cream) !important; margin: 0; padding: 0; min-height: 100vh; font-family: Georgia, 'Times New Roman', serif; color: var(--ink); }
+    * { box-sizing: border-box; }
+
+    /* ── HEADER ── */
+    .header {
+      background: linear-gradient(135deg, var(--wine-dark) 0%, var(--wine) 60%, var(--wine-light) 100%);
+      padding: 28px 40px 24px;
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 3px solid var(--copper);
+    }
+    .header-left h1 {
+      margin: 0 0 4px; color: var(--white);
+      font-size: 22px; font-weight: 700; letter-spacing: 0.02em;
+    }
+    .header-left p { margin: 0; color: rgba(255,255,255,0.65); font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; }
+    .header-badge {
+      background: rgba(196,96,10,0.25); border: 1px solid rgba(196,96,10,0.5);
+      border-radius: 6px; padding: 6px 14px; color: var(--copper-light);
+      font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+    }
+
+    /* ── MAIN LAYOUT ── */
+    .container { max-width: 960px; margin: 0 auto; padding: 32px 24px 80px; }
+
+    /* ── CARDS ── */
+    .card {
+      background: var(--white); border-radius: 12px;
+      border: 1px solid rgba(44,24,16,0.1);
+      box-shadow: 0 2px 12px var(--shadow);
+      margin-bottom: 20px; overflow: hidden;
+    }
+    .card-header {
+      background: var(--parchment); padding: 14px 20px;
+      border-bottom: 1px solid rgba(44,24,16,0.08);
+      display: flex; align-items: center; gap: 10px;
+    }
+    .card-header h2 { margin: 0; font-size: 13px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink); }
+    .card-header .icon { font-size: 16px; }
+    .card-body { padding: 20px; }
+
+    /* ── FORM FIELDS ── */
+    .field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .field-grid.three { grid-template-columns: 1fr 1fr 1fr; }
+    .field { display: flex; flex-direction: column; gap: 5px; }
+    .field label { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-light); }
+    .field input, .field textarea {
+      padding: 9px 12px; border: 1px solid rgba(44,24,16,0.2); border-radius: 7px;
+      font-family: Georgia, serif; font-size: 13px; color: var(--ink);
+      background: var(--cream); outline: none; transition: border-color 0.2s;
+    }
+    .field input:focus, .field textarea:focus { border-color: var(--wine); }
+    .field textarea { resize: vertical; min-height: 70px; }
+    .field .hint { font-size: 10px; color: var(--ink-faint); margin-top: 2px; }
+
+    /* ── BUTTONS ── */
+    .btn-primary {
+      background: linear-gradient(135deg, var(--wine) 0%, var(--wine-dark) 100%);
+      color: var(--white); border: none; border-radius: 8px;
+      padding: 13px 28px; font-family: Georgia, serif; font-size: 14px; font-weight: 700;
+      cursor: pointer; letter-spacing: 0.02em; transition: all 0.2s;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(124,48,72,0.35); }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    .btn-secondary {
+      background: rgba(196,96,10,0.1); color: var(--copper);
+      border: 1px solid rgba(196,96,10,0.35); border-radius: 8px;
+      padding: 10px 20px; font-family: Georgia, serif; font-size: 13px; font-weight: 600;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .btn-secondary:hover { background: rgba(196,96,10,0.18); }
+    .btn-export {
+      background: linear-gradient(135deg, var(--copper) 0%, var(--copper-light) 100%);
+      color: var(--white); border: none; border-radius: 8px;
+      padding: 12px 24px; font-family: Georgia, serif; font-size: 13px; font-weight: 700;
+      cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 8px;
+    }
+    .btn-export:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(196,96,10,0.35); }
+    .btn-save {
+      background: rgba(45,122,79,0.12); color: var(--green);
+      border: 1px solid rgba(45,122,79,0.35); border-radius: 8px;
+      padding: 10px 20px; font-family: Georgia, serif; font-size: 13px; font-weight: 600;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .btn-save:hover { background: rgba(45,122,79,0.2); }
+
+    /* ── LOADING ── */
+    .loading-panel {
+      display: none; background: var(--wine-dark);
+      border-radius: 12px; padding: 40px; text-align: center; margin-bottom: 20px;
+    }
+    .loading-panel.active { display: block; }
+    .loading-spinner {
+      width: 40px; height: 40px; border: 3px solid rgba(255,255,255,0.15);
+      border-top-color: var(--copper-light); border-radius: 50%;
+      animation: spin 0.9s linear infinite; margin: 0 auto 20px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading-step { color: rgba(255,255,255,0.7); font-size: 13px; margin-bottom: 8px; transition: all 0.3s; }
+    .loading-step.active { color: var(--copper-light); font-weight: 700; }
+    .loading-step.done { color: rgba(74,222,128,0.8); }
+    .loading-step.done::before { content: '✓ '; }
+
+    /* ── RESULTS ── */
+    .results-panel { display: none; }
+    .results-panel.active { display: block; }
+
+    /* Score meter */
+    .overall-score-card {
+      background: linear-gradient(135deg, var(--wine-dark) 0%, var(--wine) 100%);
+      border-radius: 12px; padding: 30px; margin-bottom: 20px;
+      display: flex; align-items: center; gap: 30px;
+    }
+    .score-circle {
+      width: 90px; height: 90px; border-radius: 50%; flex-shrink: 0;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      border: 3px solid var(--copper-light);
+      background: rgba(255,255,255,0.08);
+    }
+    .score-circle .num { font-size: 30px; font-weight: 700; color: var(--white); line-height: 1; }
+    .score-circle .denom { font-size: 11px; color: rgba(255,255,255,0.5); }
+    .score-meta h2 { margin: 0 0 6px; color: var(--white); font-size: 20px; }
+    .score-meta p { margin: 0; color: rgba(255,255,255,0.65); font-size: 13px; line-height: 1.6; }
+
+    /* Channel grid */
+    .channel-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
+    .channel-card {
+      background: var(--white); border-radius: 10px;
+      border: 1px solid rgba(44,24,16,0.1); padding: 16px;
+      box-shadow: 0 1px 6px var(--shadow);
+    }
+    .channel-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+    .channel-name { font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink); }
+    .channel-icon { font-size: 18px; }
+    .traffic-light {
+      width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
+      display: inline-block; margin-right: 5px; vertical-align: middle;
+    }
+    .tl-green { background: #22c55e; box-shadow: 0 0 6px rgba(34,197,94,0.4); }
+    .tl-yellow { background: #eab308; box-shadow: 0 0 6px rgba(234,179,8,0.4); }
+    .tl-red { background: #ef4444; box-shadow: 0 0 6px rgba(239,68,68,0.4); }
+    .channel-rating { font-size: 11px; font-weight: 700; }
+    .channel-rating.green { color: var(--green); }
+    .channel-rating.yellow { color: var(--yellow); }
+    .channel-rating.red { color: var(--red); }
+    .channel-finding { font-size: 12px; color: var(--ink-light); line-height: 1.5; margin-top: 6px; }
+    .channel-score { font-size: 11px; color: var(--ink-faint); margin-top: 8px; font-weight: 600; }
+
+    /* Brand voice table */
+    .brand-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .brand-table th {
+      background: var(--parchment); padding: 10px 14px;
+      text-align: left; font-size: 10px; font-weight: 700;
+      letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-light);
+      border-bottom: 1px solid rgba(44,24,16,0.1);
+    }
+    .brand-table td { padding: 11px 14px; border-bottom: 1px solid rgba(44,24,16,0.06); color: var(--ink); line-height: 1.5; vertical-align: top; }
+    .brand-table tr:last-child td { border-bottom: none; }
+    .brand-table tr:hover td { background: rgba(245,237,232,0.5); }
+    .voice-tag {
+      display: inline-block; background: var(--parchment); border-radius: 4px;
+      padding: 2px 8px; font-size: 11px; font-weight: 600; color: var(--wine);
+      margin: 2px 2px 2px 0; border: 1px solid rgba(124,48,72,0.15);
+    }
+    .strength-bar { height: 5px; border-radius: 3px; background: rgba(44,24,16,0.08); margin-top: 6px; overflow: hidden; }
+    .strength-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, var(--wine), var(--copper)); }
+
+    /* Opportunities */
+    .opp-list { display: flex; flex-direction: column; gap: 12px; }
+    .opp-item {
+      background: var(--cream); border-radius: 8px; padding: 16px;
+      border: 1px solid rgba(44,24,16,0.08); display: flex; gap: 14px; align-items: flex-start;
+    }
+    .opp-rank {
+      width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
+      background: var(--wine); color: var(--white);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 700;
+    }
+    .opp-rank.high { background: var(--copper); }
+    .opp-rank.medium { background: var(--amber); }
+    .opp-title { font-size: 14px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
+    .opp-desc { font-size: 12px; color: var(--ink-light); line-height: 1.6; }
+    .opp-meta { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+    .opp-tag {
+      font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+      padding: 2px 8px; border-radius: 4px;
+    }
+    .tag-effort-low { background: rgba(34,197,94,0.12); color: var(--green); border: 1px solid rgba(34,197,94,0.25); }
+    .tag-effort-med { background: rgba(196,131,10,0.12); color: var(--amber); border: 1px solid rgba(196,131,10,0.25); }
+    .tag-effort-high { background: rgba(139,32,32,0.1); color: var(--red); border: 1px solid rgba(139,32,32,0.2); }
+    .tag-impact-high { background: rgba(124,48,72,0.1); color: var(--wine); border: 1px solid rgba(124,48,72,0.2); }
+    .tag-tool { background: rgba(107,63,160,0.1); color: var(--purple); border: 1px solid rgba(107,63,160,0.2); }
+
+    /* Quick wins */
+    .wins-list { display: flex; flex-direction: column; gap: 10px; }
+    .win-item {
+      display: flex; gap: 12px; align-items: flex-start;
+      padding: 13px 16px; background: rgba(45,122,79,0.06);
+      border: 1px solid rgba(45,122,79,0.15); border-radius: 8px;
+    }
+    .win-num {
+      width: 22px; height: 22px; border-radius: 50%; flex-shrink: 0;
+      background: var(--green); color: white; font-size: 11px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .win-text { font-size: 13px; color: var(--ink); line-height: 1.6; }
+    .win-text strong { color: var(--green); }
+
+    /* Gaps */
+    .gap-list { display: flex; flex-direction: column; gap: 10px; }
+    .gap-item {
+      display: flex; gap: 12px; align-items: flex-start;
+      padding: 13px 16px; background: rgba(139,32,32,0.05);
+      border: 1px solid rgba(139,32,32,0.15); border-radius: 8px;
+    }
+    .gap-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+    .gap-text { font-size: 13px; color: var(--ink); line-height: 1.6; }
+
+    /* Actions bar */
+    .actions-bar {
+      position: sticky; bottom: 0; background: var(--white);
+      border-top: 2px solid var(--parchment); padding: 16px 24px;
+      display: flex; gap: 12px; align-items: center;
+      box-shadow: 0 -4px 20px var(--shadow); z-index: 100;
+    }
+    .actions-bar .spacer { flex: 1; }
+
+    /* Error */
+    .error-panel {
+      display: none; background: rgba(139,32,32,0.08);
+      border: 1px solid rgba(139,32,32,0.25); border-radius: 10px;
+      padding: 20px 24px; margin-bottom: 20px; color: var(--red);
+    }
+    .error-panel.active { display: block; }
+    .error-panel h3 { margin: 0 0 8px; font-size: 14px; }
+    .error-panel p { margin: 0; font-size: 13px; line-height: 1.6; }
+
+    /* Section label */
+    .section-label {
+      font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--ink-faint); margin-bottom: 12px;
+    }
+
+    /* Saved badge */
+    .saved-badge {
+      display: none; background: rgba(45,122,79,0.1); border: 1px solid rgba(45,122,79,0.3);
+      border-radius: 6px; padding: 6px 14px; font-size: 12px; font-weight: 600; color: var(--green);
+    }
+    .saved-badge.visible { display: inline-flex; align-items: center; gap: 6px; }
+
+    @media print {
+      .no-print { display: none !important; }
+      .actions-bar { display: none; }
+      body { background: white; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-left">
+    <h1>🍷 Wine AI — Marketing Audit</h1>
+    <p>Pre-Meeting Leave-Behind · Powered by Claude</p>
+  </div>
+  <div class="header-badge" id="clientBadge">New Audit</div>
+</div>
+
+<div class="container">
+
+  <!-- ── INPUT PANEL ── -->
+  <div class="card no-print" id="inputPanel">
+    <div class="card-header">
+      <span class="icon">🏢</span>
+      <h2>Client & Digital Presence</h2>
+    </div>
+    <div class="card-body">
+      <div class="field-grid" style="margin-bottom:14px;">
+        <div class="field">
+          <label>Winery Name *</label>
+          <input type="text" id="wineryName" placeholder="e.g. Scotto Cellars"/>
+        </div>
+        <div class="field">
+          <label>Owner / Key Contact</label>
+          <input type="text" id="ownerName" placeholder="e.g. Anthony Scotto"/>
+        </div>
+      </div>
+
+      <div class="section-label" style="margin-top:4px;">Websites to Audit</div>
+      <div class="field-grid" style="margin-bottom:14px;">
+        <div class="field">
+          <label>Main Website URL *</label>
+          <input type="text" id="websiteUrl" placeholder="https://www.scottocellars.com"/>
+        </div>
+        <div class="field">
+          <label>Sub-Brand URLs</label>
+          <input type="text" id="subBrandUrls" placeholder="https://www.heavyweightwines.com, ..."/>
+          <span class="hint">Comma-separated, up to 4</span>
+        </div>
+      </div>
+
+      <div class="section-label">Social Channels</div>
+      <div class="field-grid three" style="margin-bottom:14px;">
+        <div class="field">
+          <label>Instagram Handle</label>
+          <input type="text" id="instagram" placeholder="@scotto_cellars"/>
+        </div>
+        <div class="field">
+          <label>Facebook Page</label>
+          <input type="text" id="facebook" placeholder="ScottoCellars"/>
+        </div>
+        <div class="field">
+          <label>YouTube Channel</label>
+          <input type="text" id="youtube" placeholder="Scotto Cellars"/>
+        </div>
+      </div>
+
+      <div class="section-label">Context for Audit</div>
+      <div class="field-grid" style="margin-bottom:20px;">
+        <div class="field">
+          <label>Top 1–2 Competitors</label>
+          <input type="text" id="competitors" placeholder="e.g. Coppola, Prisoner Wine Co"/>
+        </div>
+        <div class="field">
+          <label>Key Business Goals / Context</label>
+          <textarea id="context" placeholder="e.g. Growing DTC, 8 sub-brands, launching alcohol-removed line, seeking more distributor attention"></textarea>
+        </div>
+      </div>
+
+      <div style="display:flex; gap:12px; align-items:center;">
+        <button class="btn-primary" id="runAuditBtn" onclick="runAudit()">
+          🔍 Run Marketing Audit
+        </button>
+        <span id="savedBadge" class="saved-badge">✓ Saved to client profile</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── LOADING ── -->
+  <div class="loading-panel" id="loadingPanel">
+    <div class="loading-spinner"></div>
+    <div id="step1" class="loading-step">Fetching website content...</div>
+    <div id="step2" class="loading-step">Analyzing brand voice across sub-brands...</div>
+    <div id="step3" class="loading-step">Scoring channel presence & content gaps...</div>
+    <div id="step4" class="loading-step">Ranking AI opportunities by effort × impact...</div>
+    <div id="step5" class="loading-step">Generating leave-behind report...</div>
+  </div>
+
+  <!-- ── ERROR ── -->
+  <div class="error-panel" id="errorPanel">
+    <h3>⚠️ Audit Failed</h3>
+    <p id="errorMsg">An error occurred while running the audit.</p>
+  </div>
+
+  <!-- ── RESULTS ── -->
+  <div class="results-panel" id="resultsPanel">
+
+    <!-- Overall Score -->
+    <div class="overall-score-card" id="overallScoreCard">
+      <div class="score-circle">
+        <span class="num" id="overallScore">—</span>
+        <span class="denom">/100</span>
+      </div>
+      <div class="score-meta">
+        <h2 id="overallLabel">Marketing Readiness Score</h2>
+        <p id="overallSummary">Running audit...</p>
+      </div>
+    </div>
+
+    <!-- Channel Ratings -->
+    <div class="card">
+      <div class="card-header"><span class="icon">📡</span><h2>Channel Presence — Traffic Light Ratings</h2></div>
+      <div class="card-body">
+        <div class="channel-grid" id="channelGrid"><!-- injected --></div>
+      </div>
+    </div>
+
+    <!-- Brand Voice -->
+    <div class="card">
+      <div class="card-header"><span class="icon">🎨</span><h2>Brand Voice Analysis</h2></div>
+      <div class="card-body">
+        <table class="brand-table" id="brandTable">
+          <thead>
+            <tr>
+              <th>Brand</th>
+              <th>Voice / Tone</th>
+              <th>Target Customer</th>
+              <th>Voice Strength</th>
+            </tr>
+          </thead>
+          <tbody id="brandTbody"><!-- injected --></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- AI Opportunities -->
+    <div class="card">
+      <div class="card-header"><span class="icon">🚀</span><h2>Top AI Opportunities — Ranked by Effort × Impact</h2></div>
+      <div class="card-body">
+        <div class="opp-list" id="oppList"><!-- injected --></div>
+      </div>
+    </div>
+
+    <!-- Quick Wins -->
+    <div class="card">
+      <div class="card-header"><span class="icon">⚡</span><h2>30-Day Quick Wins — Zero Developer Required</h2></div>
+      <div class="card-body">
+        <div class="wins-list" id="winsList"><!-- injected --></div>
+      </div>
+    </div>
+
+    <!-- Strategic Gaps -->
+    <div class="card">
+      <div class="card-header"><span class="icon">🔎</span><h2>Strategic Gaps vs. Competitors</h2></div>
+      <div class="card-body">
+        <div class="gap-list" id="gapList"><!-- injected --></div>
+      </div>
+    </div>
+
+    <!-- Consultant Note -->
+    <div class="card">
+      <div class="card-header"><span class="icon">📋</span><h2>Consultant Talking Points for Meeting 1</h2></div>
+      <div class="card-body">
+        <div id="talkingPoints" style="font-size:13px;color:var(--ink);line-height:1.8;"></div>
+      </div>
+    </div>
+
+  </div><!-- /results -->
+
+</div><!-- /container -->
+
+<!-- STICKY ACTIONS -->
+<div class="actions-bar no-print" id="actionsBar" style="display:none;">
+  <button class="btn-save" onclick="saveToProfile()">💾 Save to Client Profile</button>
+  <div class="spacer"></div>
+  <button class="btn-secondary" onclick="document.getElementById('inputPanel').scrollIntoView({behavior:'smooth'})">✏️ Edit Inputs</button>
+  <button class="btn-export" onclick="window.print()">📄 Export PDF Leave-Behind</button>
+</div>
+
+<script>
+// ── URL PARAMS → pre-fill ──────────────────────────────────────────
+(function() {
+  const p = new URLSearchParams(window.location.search);
+  if (p.get('winery'))   document.getElementById('wineryName').value  = p.get('winery');
+  if (p.get('owner'))    document.getElementById('ownerName').value   = p.get('owner');
+  if (p.get('website'))  document.getElementById('websiteUrl').value  = p.get('website');
+  if (p.get('instagram'))document.getElementById('instagram').value   = p.get('instagram');
+  if (p.get('facebook')) document.getElementById('facebook').value    = p.get('facebook');
+  if (p.get('youtube'))  document.getElementById('youtube').value     = p.get('youtube');
+
+  const client = p.get('client');
+  if (client) {
+    // Try loading from localStorage profile
+    try {
+      const stored = localStorage.getItem('wineai_client_' + client);
+      if (stored) {
+        const prof = JSON.parse(stored);
+        if (prof.wineryName && !document.getElementById('wineryName').value)
+          document.getElementById('wineryName').value = prof.wineryName;
+        if (prof.ownerName && !document.getElementById('ownerName').value)
+          document.getElementById('ownerName').value = prof.ownerName;
+        if (prof.websiteUrl && !document.getElementById('websiteUrl').value)
+          document.getElementById('websiteUrl').value = prof.websiteUrl;
+        if (prof.instagramHandle && !document.getElementById('instagram').value)
+          document.getElementById('instagram').value = prof.instagramHandle;
+        if (prof.facebookHandle && !document.getElementById('facebook').value)
+          document.getElementById('facebook').value = prof.facebookHandle;
+        if (prof.youtubeChannel && !document.getElementById('youtube').value)
+          document.getElementById('youtube').value = prof.youtubeChannel;
+      }
+    } catch(e) {}
+  }
+
+  const winery = document.getElementById('wineryName').value;
+  if (winery) document.getElementById('clientBadge').textContent = winery;
+})();
+
+// ── LOADING STEPS ANIMATION ──────────────────────────────────────
+let stepInterval = null;
+function animateSteps() {
+  const steps = ['step1','step2','step3','step4','step5'];
+  let current = 0;
+  steps.forEach(s => {
+    document.getElementById(s).className = 'loading-step';
+  });
+  document.getElementById(steps[0]).className = 'loading-step active';
+  stepInterval = setInterval(() => {
+    document.getElementById(steps[current]).className = 'loading-step done';
+    current++;
+    if (current < steps.length) {
+      document.getElementById(steps[current]).className = 'loading-step active';
+    } else {
+      clearInterval(stepInterval);
+    }
+  }, 3200);
+}
+
+// ── BUILD CLAUDE PROMPT ──────────────────────────────────────────
+function buildPrompt(inputs) {
+  return `You are a senior wine industry marketing strategist and AI consultant conducting a comprehensive digital marketing audit for ${inputs.wineryName || 'this winery'}. Your client is preparing to hire an AI consulting firm and you are producing a pre-meeting leave-behind audit document.
+
+WINERY: ${inputs.wineryName}
+OWNER: ${inputs.ownerName || 'Not specified'}
+MAIN WEBSITE: ${inputs.website || 'Not provided'}
+SUB-BRAND URLS: ${inputs.subBrands || 'None provided'}
+INSTAGRAM: ${inputs.instagram || 'Not provided'}
+FACEBOOK: ${inputs.facebook || 'Not provided'}
+YOUTUBE: ${inputs.youtube || 'Not provided'}
+COMPETITORS: ${inputs.competitors || 'Not specified'}
+BUSINESS CONTEXT: ${inputs.context || 'Boutique wine producer'}
+
+Using your knowledge of this winery's digital presence, wine industry marketing best practices, and AI automation capabilities, produce a DETAILED marketing audit. 
+
+IMPORTANT: Respond ONLY with a valid JSON object. No markdown, no backticks, no preamble. Just the raw JSON object starting with { and ending with }.
+
+The JSON must have exactly this structure:
+{
+  "overallScore": <integer 0-100>,
+  "overallLabel": "<3-5 word descriptor like 'Foundational — High Upside'>",
+  "overallSummary": "<2 sentences summarizing the marketing maturity and biggest opportunity>",
+  "channels": [
+    {
+      "name": "Website",
+      "icon": "🌐",
+      "rating": "yellow",
+      "ratingLabel": "Needs Work",
+      "finding": "<2 sentences specific to this winery's actual website situation>",
+      "score": <integer 1-10>
+    },
+    {
+      "name": "Instagram",
+      "icon": "📸",
+      "rating": "yellow",
+      "ratingLabel": "Active But Unoptimized",
+      "finding": "<specific finding>",
+      "score": <integer 1-10>
+    },
+    {
+      "name": "Facebook",
+      "icon": "👥",
+      "rating": "red",
+      "ratingLabel": "Underutilized",
+      "finding": "<specific finding>",
+      "score": <integer 1-10>
+    },
+    {
+      "name": "YouTube",
+      "icon": "🎬",
+      "rating": "red",
+      "ratingLabel": "Untapped",
+      "finding": "<specific finding>",
+      "score": <integer 1-10>
+    },
+    {
+      "name": "Email / DTC",
+      "icon": "📧",
+      "rating": "yellow",
+      "ratingLabel": "Present But Unmeasured",
+      "finding": "<specific finding>",
+      "score": <integer 1-10>
+    },
+    {
+      "name": "Brand Architecture",
+      "icon": "🏛️",
+      "rating": "yellow",
+      "ratingLabel": "Fragmented",
+      "finding": "<specific finding about sub-brand consistency>",
+      "score": <integer 1-10>
+    }
+  ],
+  "brandVoice": [
+    {
+      "brand": "<brand name>",
+      "voiceTags": ["<word1>", "<word2>", "<word3>"],
+      "targetCustomer": "<one sentence>",
+      "strengthScore": <integer 1-10>,
+      "gap": "<biggest voice/content gap for this brand>"
+    }
+  ],
+  "opportunities": [
+    {
+      "rank": 1,
+      "title": "<specific automation title>",
+      "description": "<2-3 sentences: what it does, why it matters for this specific winery, what Claude does>",
+      "effortLevel": "Low",
+      "impactLevel": "High",
+      "tool": "Claude + <specific tool>",
+      "timeToValue": "<e.g. 2 weeks>"
+    },
+    {
+      "rank": 2,
+      "title": "...",
+      "description": "...",
+      "effortLevel": "Low",
+      "impactLevel": "High",
+      "tool": "...",
+      "timeToValue": "..."
+    },
+    {
+      "rank": 3,
+      "title": "...",
+      "description": "...",
+      "effortLevel": "Medium",
+      "impactLevel": "High",
+      "tool": "...",
+      "timeToValue": "..."
+    },
+    {
+      "rank": 4,
+      "title": "...",
+      "description": "...",
+      "effortLevel": "Medium",
+      "impactLevel": "Medium",
+      "tool": "...",
+      "timeToValue": "..."
+    },
+    {
+      "rank": 5,
+      "title": "...",
+      "description": "...",
+      "effortLevel": "High",
+      "impactLevel": "High",
+      "tool": "...",
+      "timeToValue": "..."
+    }
+  ],
+  "quickWins": [
+    {
+      "title": "<30-day action title>",
+      "description": "<1-2 sentences: what to do and expected outcome, specific to this winery>"
+    },
+    {
+      "title": "...",
+      "description": "..."
+    },
+    {
+      "title": "...",
+      "description": "..."
+    }
+  ],
+  "strategicGaps": [
+    {
+      "gap": "<specific gap vs competitors>",
+      "impact": "<business consequence>",
+      "aiSolution": "<how AI fixes this>"
+    },
+    {
+      "gap": "...",
+      "impact": "...",
+      "aiSolution": "..."
+    },
+    {
+      "gap": "...",
+      "impact": "...",
+      "aiSolution": "..."
+    },
+    {
+      "gap": "...",
+      "impact": "...",
+      "aiSolution": "..."
+    }
+  ],
+  "talkingPoints": [
+    "<specific talking point referencing something real about this winery's marketing>",
+    "<talking point 2>",
+    "<talking point 3>",
+    "<talking point 4>",
+    "<talking point 5>"
+  ]
+}
+
+Make every insight SPECIFIC to ${inputs.wineryName}. Reference actual details like their sub-brands, their alcohol-removed line if mentioned, their family heritage if known, their actual social handles. Never use generic placeholders. This is a real consulting deliverable.`;
+}
+
+// ── RENDER RESULTS ─────────────────────────────────────────────
+function renderResults(data, wineryName) {
+  // Overall score
+  document.getElementById('overallScore').textContent = data.overallScore;
+  document.getElementById('overallLabel').textContent = (wineryName || 'Marketing') + ' · ' + (data.overallLabel || '');
+  document.getElementById('overallSummary').textContent = data.overallSummary || '';
+
+  // Channels
+  const channelGrid = document.getElementById('channelGrid');
+  channelGrid.innerHTML = '';
+  (data.channels || []).forEach(ch => {
+    const tlClass = 'tl-' + (ch.rating || 'yellow');
+    const ratingClass = ch.rating || 'yellow';
+    channelGrid.innerHTML += `
+      <div class="channel-card">
+        <div class="channel-header">
+          <span class="channel-icon">${ch.icon || '📊'}</span>
+          <span class="channel-name">${ch.name}</span>
+        </div>
+        <div>
+          <span class="traffic-light ${tlClass}"></span>
+          <span class="channel-rating ${ratingClass}">${ch.ratingLabel || ch.rating}</span>
+        </div>
+        <div class="channel-finding">${ch.finding}</div>
+        <div class="channel-score">Score: ${ch.score}/10</div>
+      </div>`;
+  });
+
+  // Brand voice
+  const tbody = document.getElementById('brandTbody');
+  tbody.innerHTML = '';
+  (data.brandVoice || []).forEach(b => {
+    const tags = (b.voiceTags || []).map(t => `<span class="voice-tag">${t}</span>`).join('');
+    const pct = Math.round((b.strengthScore || 5) * 10);
+    tbody.innerHTML += `
+      <tr>
+        <td><strong>${b.brand}</strong></td>
+        <td>${tags}<div style="font-size:11px;color:var(--ink-faint);margin-top:4px;">${b.gap || ''}</div></td>
+        <td style="font-size:12px;">${b.targetCustomer || ''}</td>
+        <td>
+          <span style="font-size:12px;font-weight:700;color:var(--wine);">${b.strengthScore}/10</span>
+          <div class="strength-bar"><div class="strength-fill" style="width:${pct}%"></div></div>
+        </td>
+      </tr>`;
+  });
+
+  // Opportunities
+  const oppList = document.getElementById('oppList');
+  oppList.innerHTML = '';
+  (data.opportunities || []).forEach(opp => {
+    const rankClass = opp.rank <= 2 ? 'high' : opp.rank <= 4 ? 'medium' : '';
+    const effortClass = opp.effortLevel === 'Low' ? 'tag-effort-low' : opp.effortLevel === 'Medium' ? 'tag-effort-med' : 'tag-effort-high';
+    oppList.innerHTML += `
+      <div class="opp-item">
+        <div class="opp-rank ${rankClass}">${opp.rank}</div>
+        <div style="flex:1;">
+          <div class="opp-title">${opp.title}</div>
+          <div class="opp-desc">${opp.description}</div>
+          <div class="opp-meta">
+            <span class="opp-tag ${effortClass}">Effort: ${opp.effortLevel}</span>
+            <span class="opp-tag tag-impact-high">Impact: ${opp.impactLevel}</span>
+            <span class="opp-tag tag-tool">🛠 ${opp.tool}</span>
+            <span class="opp-tag" style="background:rgba(44,24,16,0.06);color:var(--ink-light);border:1px solid rgba(44,24,16,0.1);">⏱ ${opp.timeToValue}</span>
+          </div>
+        </div>
+      </div>`;
+  });
+
+  // Quick wins
+  const winsList = document.getElementById('winsList');
+  winsList.innerHTML = '';
+  (data.quickWins || []).forEach((w, i) => {
+    winsList.innerHTML += `
+      <div class="win-item">
+        <div class="win-num">${i+1}</div>
+        <div class="win-text"><strong>${w.title}:</strong> ${w.description}</div>
+      </div>`;
+  });
+
+  // Gaps
+  const gapList = document.getElementById('gapList');
+  gapList.innerHTML = '';
+  (data.strategicGaps || []).forEach(g => {
+    gapList.innerHTML += `
+      <div class="gap-item">
+        <span class="gap-icon">⚠️</span>
+        <div class="gap-text">
+          <strong>${g.gap}</strong><br/>
+          <span style="color:var(--red);">Impact: ${g.impact}</span><br/>
+          <span style="color:var(--green);">AI Fix: ${g.aiSolution}</span>
+        </div>
+      </div>`;
+  });
+
+  // Talking points
+  const tp = document.getElementById('talkingPoints');
+  tp.innerHTML = (data.talkingPoints || []).map((t, i) =>
+    `<div style="display:flex;gap:10px;margin-bottom:10px;align-items:flex-start;">
+      <span style="background:var(--wine);color:white;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;">${i+1}</span>
+      <span>${t}</span>
+    </div>`
+  ).join('');
+}
+
+// ── MAIN AUDIT FUNCTION ───────────────────────────────────────
+async function runAudit() {
+  const wineryName  = document.getElementById('wineryName').value.trim();
+  const ownerName   = document.getElementById('ownerName').value.trim();
+  const website     = document.getElementById('websiteUrl').value.trim();
+  const subBrands   = document.getElementById('subBrandUrls').value.trim();
+  const instagram   = document.getElementById('instagram').value.trim();
+  const facebook    = document.getElementById('facebook').value.trim();
+  const youtube     = document.getElementById('youtube').value.trim();
+  const competitors = document.getElementById('competitors').value.trim();
+  const context     = document.getElementById('context').value.trim();
+
+  if (!wineryName) {
+    alert('Please enter the winery name.');
+    return;
+  }
+
+  // UI transitions
+  document.getElementById('inputPanel').style.opacity = '0.5';
+  document.getElementById('runAuditBtn').disabled = true;
+  document.getElementById('errorPanel').className = 'error-panel';
+  document.getElementById('resultsPanel').className = 'results-panel';
+  document.getElementById('actionsBar').style.display = 'none';
+  document.getElementById('loadingPanel').className = 'loading-panel active';
+  document.getElementById('clientBadge').textContent = wineryName;
+  window.scrollTo({top: 0, behavior: 'smooth'});
+  animateSteps();
+
+  const inputs = { wineryName, ownerName, website, subBrands, instagram, facebook, youtube, competitors, context };
+  const prompt = buildPrompt(inputs);
+
+  try {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 4000,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+
+    clearInterval(stepInterval);
+    // mark all steps done
+    ['step1','step2','step3','step4','step5'].forEach(s => {
+      document.getElementById(s).className = 'loading-step done';
+    });
+
+    if (!response.ok) {
+      const err = await response.json();
+      throw new Error(err.error?.message || 'API request failed');
+    }
+
+    const apiData = await response.json();
+    const rawText = apiData.content?.filter(b => b.type === 'text').map(b => b.text).join('') || '';
+
+    // Parse JSON — strip any accidental backticks
+    let parsed;
+    try {
+      const clean = rawText.replace(/```json|```/g, '').trim();
+      parsed = JSON.parse(clean);
+    } catch(e) {
+      throw new Error('Could not parse audit response. Raw: ' + rawText.substring(0, 200));
+    }
+
+    // Store for save later
+    window._lastAuditData = { inputs, parsed };
+
+    setTimeout(() => {
+      document.getElementById('loadingPanel').className = 'loading-panel';
+      document.getElementById('inputPanel').style.opacity = '1';
+      document.getElementById('runAuditBtn').disabled = false;
+      document.getElementById('resultsPanel').className = 'results-panel active';
+      document.getElementById('actionsBar').style.display = 'flex';
+      renderResults(parsed, wineryName);
+      document.getElementById('resultsPanel').scrollIntoView({ behavior: 'smooth' });
+    }, 500);
+
+  } catch(err) {
+    clearInterval(stepInterval);
+    document.getElementById('loadingPanel').className = 'loading-panel';
+    document.getElementById('inputPanel').style.opacity = '1';
+    document.getElementById('runAuditBtn').disabled = false;
+    document.getElementById('errorPanel').className = 'error-panel active';
+    document.getElementById('errorMsg').textContent = err.message || 'Unknown error occurred.';
+  }
+}
+
+// ── SAVE TO CLIENT PROFILE ─────────────────────────────────────
+function saveToProfile() {
+  if (!window._lastAuditData) return;
+  const { inputs, parsed } = window._lastAuditData;
+  const p = new URLSearchParams(window.location.search);
+  const clientKey = p.get('client') || inputs.wineryName.toLowerCase().replace(/\s+/g, '_');
+
+  try {
+    // Update the shared client localStorage profile
+    const existingRaw = localStorage.getItem('wineai_client_' + clientKey);
+    const existing = existingRaw ? JSON.parse(existingRaw) : {};
+    const updated = Object.assign({}, existing, {
+      wineryName: inputs.wineryName,
+      ownerName: inputs.ownerName,
+      websiteUrl: inputs.website,
+      instagramHandle: inputs.instagram,
+      facebookHandle: inputs.facebook,
+      youtubeChannel: inputs.youtube,
+      marketingAudit: {
+        runAt: new Date().toISOString(),
+        overallScore: parsed.overallScore,
+        overallLabel: parsed.overallLabel,
+        channelRatings: (parsed.channels || []).reduce((acc, ch) => { acc[ch.name] = ch.rating; return acc; }, {}),
+        topOpportunity: parsed.opportunities?.[0]?.title || '',
+        quickWin1: parsed.quickWins?.[0]?.title || '',
+      }
+    });
+    localStorage.setItem('wineai_client_' + clientKey, JSON.stringify(updated));
+
+    // Also save full audit for recall
+    localStorage.setItem('wineai_audit_' + clientKey, JSON.stringify(parsed));
+
+    const badge = document.getElementById('savedBadge');
+    badge.className = 'saved-badge visible';
+    setTimeout(() => { badge.className = 'saved-badge'; }, 3000);
+
+    // Mark the engagement step in coworkStatus
+    try {
+      const cs = JSON.parse(updated.coworkStatus || '{}');
+      cs.marketingAuditRun = true;
+      updated.coworkStatus = cs;
+      localStorage.setItem('wineai_client_' + clientKey, JSON.stringify(updated));
+    } catch(e) {}
+
+  } catch(e) {
+    alert('Could not save to profile: ' + e.message);
+  }
+}
+
+// ── KEYBOARD SHORTCUT ──────────────────────────────────────────
+document.addEventListener('keydown', e => {
+  if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') runAudit();
+});
+</script>
+</body>
+</html>
