@@ -473,32 +473,37 @@
 // ── URL PARAMS → pre-fill ──────────────────────────────────────────
 (function() {
   const p = new URLSearchParams(window.location.search);
-  if (p.get('winery'))   document.getElementById('wineryName').value  = p.get('winery');
-  if (p.get('owner'))    document.getElementById('ownerName').value   = p.get('owner');
-  if (p.get('website'))  document.getElementById('websiteUrl').value  = p.get('website');
-  if (p.get('instagram'))document.getElementById('instagram').value   = p.get('instagram');
-  if (p.get('facebook')) document.getElementById('facebook').value    = p.get('facebook');
-  if (p.get('youtube'))  document.getElementById('youtube').value     = p.get('youtube');
+  if (p.get('winery'))     document.getElementById('wineryName').value  = p.get('winery');
+  if (p.get('owner'))      document.getElementById('ownerName').value   = p.get('owner');
+  if (p.get('website'))    document.getElementById('websiteUrl').value  = p.get('website');
+  if (p.get('instagram'))  document.getElementById('instagram').value   = p.get('instagram');
+  if (p.get('facebook'))   document.getElementById('facebook').value    = p.get('facebook');
+  if (p.get('youtube'))    document.getElementById('youtube').value     = p.get('youtube');
+  if (p.get('subbrands'))  document.getElementById('subBrandUrls').value = p.get('subbrands');
+  if (p.get('competitors'))document.getElementById('competitors').value  = p.get('competitors');
+  if (p.get('context'))    document.getElementById('context').value      = p.get('context');
 
   const client = p.get('client');
   if (client) {
-    // Try loading from localStorage profile
     try {
       const stored = localStorage.getItem('wineai_client_' + client);
       if (stored) {
         const prof = JSON.parse(stored);
-        if (prof.wineryName && !document.getElementById('wineryName').value)
-          document.getElementById('wineryName').value = prof.wineryName;
-        if (prof.ownerName && !document.getElementById('ownerName').value)
-          document.getElementById('ownerName').value = prof.ownerName;
-        if (prof.websiteUrl && !document.getElementById('websiteUrl').value)
-          document.getElementById('websiteUrl').value = prof.websiteUrl;
-        if (prof.instagramHandle && !document.getElementById('instagram').value)
-          document.getElementById('instagram').value = prof.instagramHandle;
-        if (prof.facebookHandle && !document.getElementById('facebook').value)
-          document.getElementById('facebook').value = prof.facebookHandle;
-        if (prof.youtubeChannel && !document.getElementById('youtube').value)
-          document.getElementById('youtube').value = prof.youtubeChannel;
+        // Basic fields from main profile
+        const set = (id, val) => { if (val && !document.getElementById(id).value) document.getElementById(id).value = val; };
+        set('wineryName',  prof.wineryName);
+        set('ownerName',   prof.ownerName);
+        set('websiteUrl',  prof.websiteUrl);
+        set('instagram',   prof.instagramHandle);
+        set('facebook',    prof.facebookHandle);
+        set('youtube',     prof.youtubeChannel);
+        // Audit-specific fields saved from previous run
+        if (prof.auditInputs) {
+          set('subBrandUrls', prof.auditInputs.subBrands);
+          set('competitors',  prof.auditInputs.competitors);
+          const ctx = document.getElementById('context');
+          if (prof.auditInputs.context && !ctx.value) ctx.value = prof.auditInputs.context;
+        }
       }
     } catch(e) {}
   }
@@ -924,6 +929,12 @@ function saveToProfile() {
       instagramHandle: inputs.instagram,
       facebookHandle: inputs.facebook,
       youtubeChannel: inputs.youtube,
+      // Save ALL audit inputs so they pre-fill next time
+      auditInputs: {
+        subBrands:   inputs.subBrands,
+        competitors: inputs.competitors,
+        context:     inputs.context
+      },
       marketingAudit: {
         runAt: new Date().toISOString(),
         overallScore: parsed.overallScore,
