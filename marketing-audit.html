@@ -953,29 +953,28 @@ function saveToProfile() {
     localStorage.setItem('wineai_client_' + clientKey, JSON.stringify(updated));
     localStorage.setItem('wineai_audit_' + clientKey, JSON.stringify(parsed));
 
-    // URL HANDOFF: encode audit data and return to local playbook
-    if (returnUrl) {
-      const score = parsed.overallScore;
-      const label = encodeURIComponent(parsed.overallLabel || '');
-      const opp   = encodeURIComponent(parsed.opportunities?.[0]?.title || '');
-      const win1  = encodeURIComponent(parsed.quickWins?.[0]?.title || '');
-      const chans = encodeURIComponent(JSON.stringify(channels));
-      const handoff = returnUrl
-        + '?importAudit=' + clientKey
-        + '&score=' + score
-        + '&label=' + label
-        + '&opportunity=' + opp
-        + '&win1=' + win1
-        + '&channels=' + chans;
-      const badge = document.getElementById('savedBadge');
-      const saveBtn = document.getElementById('saveReturnBtn');
-      if (badge) { badge.className = 'saved-badge visible'; badge.textContent = '\u2713 Saved! Returning to playbook...'; }
-      if (saveBtn) { saveBtn.textContent = '\u2713 Saved! Returning in 2s...'; saveBtn.disabled = true; }
-      setTimeout(() => { window.location.href = handoff; }, 2000);
-    } else {
-      const badge = document.getElementById('savedBadge');
-      if (badge) { badge.className = 'saved-badge visible'; setTimeout(() => { badge.className = 'saved-badge'; }, 3000); }
-    }
+    // BROADCAST: send audit data to playbook tab (works across file:// and https://)
+    const auditPayload = {
+      type: 'wineai_audit_complete',
+      codename: clientKey,
+      score: parsed.overallScore,
+      label: parsed.overallLabel || '',
+      opportunity: parsed.opportunities?.[0]?.title || '',
+      win1: parsed.quickWins?.[0]?.title || '',
+      channels: channels,
+      runAt: new Date().toISOString()
+    };
+    // Try BroadcastChannel (same browser, any origin)
+    try {
+      const bc = new BroadcastChannel('wineai_channel');
+      bc.postMessage(auditPayload);
+      bc.close();
+    } catch(e) {}
+    // Show success UI
+    const badge = document.getElementById('savedBadge');
+    const saveBtn = document.getElementById('saveReturnBtn');
+    if (badge) { badge.className = 'saved-badge visible'; badge.textContent = '\u2713 Saved! Switch back to your Playbook tab.'; }
+    if (saveBtn) { saveBtn.textContent = '\u2713 Saved! Switch to Playbook tab'; saveBtn.disabled = true; }
   } catch(e) {
     alert('Could not save: ' + e.message);
   }
