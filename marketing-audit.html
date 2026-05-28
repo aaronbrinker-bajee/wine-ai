@@ -889,7 +889,12 @@ async function runAudit() {
     // Parse JSON — strip any accidental backticks
     let parsed;
     try {
-      const clean = rawText.replace(/```json|```/g, '').trim();
+      let clean = rawText.replace(/```json\s*/g, '').replace(/```\s*/g, '').trim();
+      const firstBrace = clean.indexOf('{');
+      const lastBrace = clean.lastIndexOf('}');
+      if (firstBrace !== -1 && lastBrace !== -1) {
+        clean = clean.substring(firstBrace, lastBrace + 1);
+      }
       parsed = JSON.parse(clean);
     } catch(e) {
       throw new Error('Could not parse audit response. Raw: ' + rawText.substring(0, 200));
