@@ -359,6 +359,7 @@
       </div>
 
       <div style="display:flex; gap:12px; align-items:center;">
+        <button class="btn-secondary" onclick="resetApiKey()" style="font-size:11px;padding:8px 14px;">🔑 Reset API Key</button>
         <button class="btn-primary" id="runAuditBtn" onclick="runAudit()">
           🔍 Run Marketing Audit
         </button>
@@ -838,10 +839,32 @@ async function runAudit() {
   const inputs = { wineryName, ownerName, website, subBrands, instagram, facebook, youtube, competitors, context };
   const prompt = buildPrompt(inputs);
 
+  // ── API KEY: load from localStorage or prompt ──
+  let apiKey = localStorage.getItem('wineai_anthropic_key') || '';
+  if (!apiKey) {
+    apiKey = window.prompt('Enter your Anthropic API key (stored locally in your browser, never shared).\n\nGet one at: console.anthropic.com → API Keys\n\nKeys start with sk-ant-');
+    if (!apiKey || !apiKey.trim().startsWith('sk-')) {
+      document.getElementById('loadingPanel').className = 'loading-panel';
+      document.getElementById('inputPanel').style.opacity = '1';
+      document.getElementById('runAuditBtn').disabled = false;
+      document.getElementById('errorPanel').className = 'error-panel active';
+      document.getElementById('errorMsg').textContent = 'Valid Anthropic API key required (starts with sk-ant-). Get one at console.anthropic.com under API Keys.';
+      clearInterval(stepInterval);
+      return;
+    }
+    localStorage.setItem('wineai_anthropic_key', apiKey.trim());
+    apiKey = apiKey.trim();
+  }
+
   try {
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
       body: JSON.stringify({
         model: 'claude-sonnet-4-20250514',
         max_tokens: 4000,
@@ -942,6 +965,12 @@ function saveToProfile() {
   } catch(e) {
     alert('Could not save to profile: ' + e.message);
   }
+}
+
+// ── API KEY RESET ─────────────────────────────────────────────
+function resetApiKey() {
+  localStorage.removeItem('wineai_anthropic_key');
+  alert('API key cleared. You will be prompted for it on the next audit run.');
 }
 
 // ── KEYBOARD SHORTCUT ──────────────────────────────────────────
