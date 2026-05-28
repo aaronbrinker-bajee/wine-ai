@@ -968,7 +968,8 @@ function saveToProfile() {
     try {
       const bc = new BroadcastChannel('wineai_channel');
       bc.postMessage(auditPayload);
-      bc.close();
+      // Delay close so message delivers before channel shuts down
+      setTimeout(() => { try { bc.close(); } catch(e) {} }, 500);
     } catch(e) {}
     // Show success UI
     const badge = document.getElementById('savedBadge');
