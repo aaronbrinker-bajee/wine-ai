@@ -953,7 +953,7 @@ function saveToProfile() {
     localStorage.setItem('wineai_client_' + clientKey, JSON.stringify(updated));
     localStorage.setItem('wineai_audit_' + clientKey, JSON.stringify(parsed));
 
-    // BROADCAST: send audit data to playbook tab (works across file:// and https://)
+    // Send audit data to playbook via window.opener.postMessage (works cross-origin)
     const auditPayload = {
       type: 'wineai_audit_complete',
       codename: clientKey,
@@ -964,13 +964,10 @@ function saveToProfile() {
       channels: channels,
       runAt: new Date().toISOString()
     };
-    // Try BroadcastChannel (same browser, any origin)
-    try {
-      const bc = new BroadcastChannel('wineai_channel');
-      bc.postMessage(auditPayload);
-      // Delay close so message delivers before channel shuts down
-      setTimeout(() => { try { bc.close(); } catch(e) {} }, 500);
-    } catch(e) {}
+    // postMessage to opener (the playbook tab that launched this window)
+    if (window.opener && !window.opener.closed) {
+      window.opener.postMessage(auditPayload, '*');
+    }
     // Show success UI
     const badge = document.getElementById('savedBadge');
     const saveBtn = document.getElementById('saveReturnBtn');
