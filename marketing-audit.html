@@ -324,9 +324,9 @@
           <input type="text" id="websiteUrl" placeholder="https://www.scottocellars.com"/>
         </div>
         <div class="field">
-          <label>Sub-Brand URLs</label>
-          <input type="text" id="subBrandUrls" placeholder="https://www.heavyweightwines.com, ..."/>
-          <span class="hint">Comma-separated, up to 4</span>
+          <label>Sub-Brand URLs (all of them)</label>
+          <input type="text" id="subBrandUrls" placeholder="https://www.heavyweightwines.com, https://www.nolagracecellars.com, ..."/>
+          <span class="hint">Comma-separated — paste all sub-brand URLs</span>
         </div>
       </div>
 
@@ -889,15 +889,16 @@ async function runAudit() {
     // Parse JSON — strip any accidental backticks
     let parsed;
     try {
-      let clean = rawText.replace(/```json\s*/g, '').replace(/```\s*/g, '').trim();
-      const firstBrace = clean.indexOf('{');
-      const lastBrace = clean.lastIndexOf('}');
-      if (firstBrace !== -1 && lastBrace !== -1) {
-        clean = clean.substring(firstBrace, lastBrace + 1);
+      // Aggressively extract JSON: find first { and last } regardless of surrounding text
+      const firstBrace = rawText.indexOf('{');
+      const lastBrace = rawText.lastIndexOf('}');
+      if (firstBrace === -1 || lastBrace === -1) {
+        throw new Error('No JSON object found in response');
       }
+      const clean = rawText.substring(firstBrace, lastBrace + 1);
       parsed = JSON.parse(clean);
     } catch(e) {
-      throw new Error('Could not parse audit response. Raw: ' + rawText.substring(0, 200));
+      throw new Error('Could not parse audit response. Raw: ' + rawText.substring(0, 300));
     }
 
     // Store for save later
