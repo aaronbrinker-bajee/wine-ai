@@ -543,7 +543,7 @@ BUSINESS CONTEXT: ${inputs.context || 'Boutique wine producer'}
 
 Using your knowledge of this winery's digital presence, wine industry marketing best practices, and AI automation capabilities, produce a DETAILED marketing audit. 
 
-IMPORTANT: Respond ONLY with a valid JSON object. No markdown, no backticks, no preamble. Just the raw JSON object starting with { and ending with }.
+CRITICAL FORMATTING RULE: Your response must be ONLY a raw JSON object. Do NOT use markdown code fences or any wrapper characters. Do NOT add any text before or after the JSON. Start your response with the { character and end with the } character. Nothing else before or after.
 
 The JSON must have exactly this structure:
 {
@@ -603,7 +603,7 @@ The JSON must have exactly this structure:
   "brandVoice": [
     {
       "brand": "<brand name>",
-      "voiceTags": ["<word1>", "<word2>", "<word3>"],
+      "voiceTags": ["<word1>", "<word2>"],
       "targetCustomer": "<one sentence>",
       "strengthScore": <integer 1-10>,
       "gap": "<biggest voice/content gap for this brand>"
@@ -613,7 +613,7 @@ The JSON must have exactly this structure:
     {
       "rank": 1,
       "title": "<specific automation title>",
-      "description": "<2-3 sentences: what it does, why it matters for this specific winery, what Claude does>",
+      "description": "<2 sentences: what it does and why it matters for this winery>",
       "effortLevel": "Low",
       "impactLevel": "High",
       "tool": "Claude + <specific tool>",
@@ -633,24 +633,6 @@ The JSON must have exactly this structure:
       "title": "...",
       "description": "...",
       "effortLevel": "Medium",
-      "impactLevel": "High",
-      "tool": "...",
-      "timeToValue": "..."
-    },
-    {
-      "rank": 4,
-      "title": "...",
-      "description": "...",
-      "effortLevel": "Medium",
-      "impactLevel": "Medium",
-      "tool": "...",
-      "timeToValue": "..."
-    },
-    {
-      "rank": 5,
-      "title": "...",
-      "description": "...",
-      "effortLevel": "High",
       "impactLevel": "High",
       "tool": "...",
       "timeToValue": "..."
@@ -695,9 +677,7 @@ The JSON must have exactly this structure:
   "talkingPoints": [
     "<specific talking point referencing something real about this winery's marketing>",
     "<talking point 2>",
-    "<talking point 3>",
-    "<talking point 4>",
-    "<talking point 5>"
+    "<talking point 3>"
   ]
 }
 
@@ -867,7 +847,7 @@ async function runAudit() {
       },
       body: JSON.stringify({
         model: 'claude-sonnet-4-5',
-        max_tokens: 4000,
+        max_tokens: 8000,
         messages: [{ role: 'user', content: prompt }]
       })
     });
@@ -898,7 +878,7 @@ async function runAudit() {
       const clean = rawText.substring(firstBrace, lastBrace + 1);
       parsed = JSON.parse(clean);
     } catch(e) {
-      throw new Error('Could not parse audit response. Raw: ' + rawText.substring(0, 300));
+      throw new Error('Parse error: ' + e.message + ' | Raw start: ' + rawText.substring(0, 150) + ' | Raw end: ' + rawText.substring(rawText.length - 150));
     }
 
     // Store for save later
@@ -962,7 +942,9 @@ function saveToProfile() {
 
     // Mark the engagement step in coworkStatus
     try {
-      const cs = JSON.parse(updated.coworkStatus || '{}');
+      const cs = (typeof updated.coworkStatus === 'object' && updated.coworkStatus) 
+        ? updated.coworkStatus 
+        : {};
       cs.marketingAuditRun = true;
       updated.coworkStatus = cs;
       localStorage.setItem('wineai_client_' + clientKey, JSON.stringify(updated));
